@@ -641,8 +641,13 @@ public class PreprocStage extends Stage {
         
         // depending on the result the event listener is sent
         if (!isValid) {
-            if (rqCap.hasExpired())
+            if (rqCap.hasExpired()) {
+                System.out.println(rq.toString());
+                System.out.println(rqCap.toString());
+                System.out.println(Thread.currentThread().getStackTrace());
+
                 return ErrorUtils.getErrorResponse(ErrorType.ERRNO, POSIXErrno.POSIX_ERROR_EACCES, "capability is not valid (timed out)");
+            }
 
             if (!rqCap.hasValidSignature())
                 return ErrorUtils.getErrorResponse(ErrorType.ERRNO, POSIXErrno.POSIX_ERROR_EACCES, "capability is not valid (invalid signature)");
