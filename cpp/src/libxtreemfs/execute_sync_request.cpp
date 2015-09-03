@@ -229,7 +229,7 @@ rpc::SyncCallbackBase* ExecuteSyncRequest(
       if (err.error_type() == IO_ERROR ||
           err.error_type() == INTERNAL_SERVER_ERROR) {
         // Log only the first retry.
-        if (attempt == 1 && options.max_retries() != 1) {
+        if (options.max_retries() != 1) {
          string retries_left = options.max_retries() == 0 ? "infinite"
              : boost::lexical_cast<string>(options.max_retries() - attempt);
          delay_error = "Got no response from server "
