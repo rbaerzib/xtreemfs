@@ -74,7 +74,7 @@ public class RPCNIOSocketClient extends LifeCycleThread {
     
     private final int                                         connectionTimeout;
 
-    private AtomicLong                                        lastCheck;
+    private final AtomicLong                                        lastCheck;
     
     private final Selector                                    selector;
     
@@ -751,12 +751,16 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                         // check for request timeout
                         List<RPCClientRequest> cancelRq = new LinkedList<RPCClientRequest>();
                         synchronized (con) {
+                            System.out.println("Cur Request size: " + con.getRequests().values().size());
+
                             Iterator<RPCClientRequest> iter = con.getRequests().values().iterator();
                             while (iter.hasNext()) {
                                 final RPCClientRequest rq = iter.next();
                                 if (rq.getTimeQueued() + requestTimeout < now) {
                                     cancelRq.add(rq);
                                     iter.remove();
+                                    System.out.println("Cancel In Request: " + rq.getClass());
+                                    System.out.println(" ## " + rq.getRequestHeader().toString());
                                 }
                             }
                             iter = con.getSendQueue().iterator();
@@ -765,6 +769,10 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                                 if (rq.getTimeQueued() + requestTimeout < now) {
                                     cancelRq.add(rq);
                                     iter.remove();
+                                    System.out.println("Cancel Send Request: " + rq.getClass());
+                                    System.out.println(" ## Q-T vs now: " + rq.getTimeQueued() + " + " + requestTimeout
+                                            + " vs " + now);
+                                    System.out.println(" ## " + rq.getRequestHeader().toString());
                                 } else {
                                     // requests are ordered :-)
                                     break;
