@@ -774,7 +774,6 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                                     System.out.println("Cancel Send Request: " + rq.getClass());
                                     System.out.println(" ## Q-T vs now: " + rq.getTimeQueued() + " + " + requestTimeout
                                             + " vs " + now);
-                                    System.out.println(" ## " + rq.);
                                     System.out.println(" ## " + rq.getRequestHeader().toString());
                                     System.out.println(" ## " + rq.getResponseHeader().toString());
                                     System.out.println(" ## " + rq.getResponse().toString());
