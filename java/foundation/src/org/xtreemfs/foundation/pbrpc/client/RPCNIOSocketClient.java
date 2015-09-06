@@ -751,7 +751,6 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                         // check for request timeout
                         List<RPCClientRequest> cancelRq = new LinkedList<RPCClientRequest>();
                         synchronized (con) {
-                            System.out.println("Cur Request size: " + con.getRequests().values().size());
 
                             Iterator<RPCClientRequest> iter = con.getRequests().values().iterator();
                             while (iter.hasNext()) {
@@ -760,9 +759,12 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                                     cancelRq.add(rq);
                                     iter.remove();
                                     System.out.println("Cancel In Request: " + rq.getClass());
+                                    System.out.println(" ## Cur In Request size: " + con.getRequests().values().size());
                                     System.out.println(" ## " + rq.getRequestHeader().toString());
                                 }
                             }
+
+                            System.out.println("Cur Send Request size: " + con.getSendQueue().size());
                             iter = con.getSendQueue().iterator();
                             while (iter.hasNext()) {
                                 final RPCClientRequest rq = iter.next();
@@ -772,7 +774,10 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                                     System.out.println("Cancel Send Request: " + rq.getClass());
                                     System.out.println(" ## Q-T vs now: " + rq.getTimeQueued() + " + " + requestTimeout
                                             + " vs " + now);
+                                    System.out.println(" ## " + rq.);
                                     System.out.println(" ## " + rq.getRequestHeader().toString());
+                                    System.out.println(" ## " + rq.getResponseHeader().toString());
+                                    System.out.println(" ## " + rq.getResponse().toString());
                                 } else {
                                     // requests are ordered :-)
                                     break;
