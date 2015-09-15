@@ -89,6 +89,11 @@ public abstract class Stage extends LifeCycleThread {
         
         if (request == null) {
             try {
+                System.out.println("Internal Request");
+                System.out.println("StageOp");
+                System.out.println(stageOp);
+                System.out.println("args");
+                System.out.println(args);
                 q.put(new StageRequest(stageOp, args, request, callback));
             } catch (InterruptedException e) {
                 Logging.logMessage(Logging.LEVEL_DEBUG, Category.stage, this,
