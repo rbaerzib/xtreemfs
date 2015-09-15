@@ -502,6 +502,15 @@ public class StorageThread extends Stage {
                         + offset + " data.length=" + dataCapacity + " stripe size=" + stripeSize + ")"));
                 return;
             }
+            try {
+                System.out.println("- " + master.getOsdVoucherManager());
+                System.out.println("# " + rq.getRequest());
+                System.out.println("## " + rq.getRequest().getCapability());
+                System.out.println("### " + rq.getRequest().getCapability().getExpireMs());
+                System.out.println("#### " + sp.getObjectStartOffset(objNo));
+            } catch (Throwable t) {
+                System.out.println(t);
+            }
             
             // check quota
             if (!master.getOsdVoucherManager().checkMaxVoucherSize(fileId,
