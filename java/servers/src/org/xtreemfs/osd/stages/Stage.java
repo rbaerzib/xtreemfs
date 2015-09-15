@@ -19,7 +19,6 @@ import org.xtreemfs.foundation.buffer.ReusableBuffer;
 import org.xtreemfs.foundation.logging.Logging;
 import org.xtreemfs.foundation.logging.Logging.Category;
 import org.xtreemfs.foundation.pbrpc.generatedinterfaces.RPC.RPCHeader.ErrorResponse;
-import org.xtreemfs.foundation.util.OutputUtils;
 import org.xtreemfs.osd.OSDRequest;
 
 public abstract class Stage extends LifeCycleThread {
@@ -83,6 +82,9 @@ public abstract class Stage extends LifeCycleThread {
      */
     protected void enqueueOperation(int stageOp, Object[] args, OSDRequest request, ReusableBuffer createdViewBuffer,
             Object callback) {
+        System.out.println("Request");
+        System.out.println(request);
+
         // rq.setEnqueueNanos(System.nanoTime());
         
         if (request == null) {
@@ -121,6 +123,7 @@ public abstract class Stage extends LifeCycleThread {
     /**
      * shut the stage thread down
      */
+    @Override
     public void shutdown() {
         this.quit = true;
         this.interrupt();
@@ -181,11 +184,11 @@ public abstract class Stage extends LifeCycleThread {
     
     public static final class StageRequest {
         
-        private int              stageMethod;
+        private final int              stageMethod;
         
-        private Object           callback;
+        private final Object           callback;
         
-        private Object[]         args;
+        private final Object[]         args;
         
         private final OSDRequest request;
         

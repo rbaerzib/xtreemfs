@@ -503,11 +503,17 @@ public class StorageThread extends Stage {
                 return;
             }
             try {
-                System.out.println("- " + master.getOsdVoucherManager());
-                System.out.println("# " + rq.getRequest());
-                System.out.println("## " + rq.getRequest().getCapability());
-                System.out.println("### " + rq.getRequest().getCapability().getExpireMs());
-                System.out.println("#### " + sp.getObjectStartOffset(objNo));
+                System.out.println("# 1");
+                System.out.println(master.getOsdVoucherManager());
+                System.out.println("# 2");
+                System.out.println(rq.getRequest());
+                System.out.println("# 3");
+                System.out.println(rq.getRequest().getCapability());
+                System.out.println("# 4");
+                System.out.println(rq.getRequest().getCapability().getExpireMs());
+                System.out.println("# 5");
+                System.out.println(sp.getObjectStartOffset(objNo));
+                System.out.println("# 6");
             } catch (Throwable t) {
                 System.out.println(t);
             }
