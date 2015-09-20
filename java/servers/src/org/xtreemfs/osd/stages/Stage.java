@@ -19,7 +19,6 @@ import org.xtreemfs.foundation.buffer.ReusableBuffer;
 import org.xtreemfs.foundation.logging.Logging;
 import org.xtreemfs.foundation.logging.Logging.Category;
 import org.xtreemfs.foundation.pbrpc.generatedinterfaces.RPC.RPCHeader.ErrorResponse;
-import org.xtreemfs.foundation.util.OutputUtils;
 import org.xtreemfs.osd.OSDRequest;
 
 public abstract class Stage extends LifeCycleThread {
@@ -121,6 +120,7 @@ public abstract class Stage extends LifeCycleThread {
     /**
      * shut the stage thread down
      */
+    @Override
     public void shutdown() {
         this.quit = true;
         this.interrupt();
@@ -144,6 +144,10 @@ public abstract class Stage extends LifeCycleThread {
             try {
                 final StageRequest op = q.take();
                 
+                if (getName().startsWith("OSD StThr")) {
+                    System.out.println(getName() + " queue size: " + q.size());
+                }
+
                 processMethod(op);
                 
             } catch (InterruptedException ex) {
@@ -181,11 +185,11 @@ public abstract class Stage extends LifeCycleThread {
     
     public static final class StageRequest {
         
-        private int              stageMethod;
+        private final int              stageMethod;
         
-        private Object           callback;
+        private final Object           callback;
         
-        private Object[]         args;
+        private final Object[]         args;
         
         private final OSDRequest request;
         
