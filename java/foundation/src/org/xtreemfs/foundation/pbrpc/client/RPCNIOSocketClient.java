@@ -758,13 +758,16 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                                 if (rq.getTimeQueued() + requestTimeout < now) {
                                     cancelRq.add(rq);
                                     iter.remove();
-                                    System.out.println("Cancel In Request: " + rq.getClass());
+                                    System.out.println(now + " Cancel In Request: " + rq.getClass());
                                     System.out.println(" ## Cur In Request size: " + con.getRequests().values().size());
                                     System.out.println(" ## " + rq.getRequestHeader().toString());
                                 }
                             }
 
-                            System.out.println("Cur Send Request size: " + con.getSendQueue().size());
+                            if (con.getSendQueue().size() != 0) {
+                                System.out.println(now + " Cur Send Request size: "
+                                        + con.getSendQueue().size());
+                            }
                             iter = con.getSendQueue().iterator();
                             while (iter.hasNext()) {
                                 final RPCClientRequest rq = iter.next();

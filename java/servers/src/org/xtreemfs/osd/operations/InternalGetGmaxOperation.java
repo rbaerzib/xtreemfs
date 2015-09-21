@@ -46,8 +46,12 @@ public final class InternalGetGmaxOperation extends OSDOperation {
         final xtreemfs_internal_get_gmaxRequest args = (xtreemfs_internal_get_gmaxRequest) rq
                 .getRequestArgs();
 
-        System.out.println(System.currentTimeMillis() + "Internal GMAX. Args:");
-        System.out.println(args.toString());
+        System.out.println(System.currentTimeMillis() + " Internal GMAX. FileID: " + args.getFileId());
+        if (rq.getRpcRequest() != null) {
+            System.out.println(rq.getRpcRequest().getHeader().toString());
+        } else {
+            System.out.println("RPC Request is null");
+        }
 
         master.getStorageStage().internalGetGmax(
             args.getFileId(),
@@ -66,7 +70,7 @@ public final class InternalGetGmaxOperation extends OSDOperation {
     }
     
     public void sendResponse(OSDRequest rq, InternalGmax result) {
-        System.out.println(System.currentTimeMillis() + "Internal GMAX - Send Response");
+        System.out.println(System.currentTimeMillis() + " Internal GMAX - Send Response");
         rq.sendSuccess(result,null);
     }
 

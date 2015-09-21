@@ -264,7 +264,13 @@ public class StorageThread extends Stage {
     private void processGetGmax(StageRequest rq) {
         final InternalGetGmaxCallback cback = (InternalGetGmaxCallback) rq.getCallback();
         try {
-            System.out.println(System.currentTimeMillis() + "StorageThread - processGetGmax");
+            System.out.println(System.currentTimeMillis() + " StorageThread - processGetGmax");
+            if (rq.getRequest() != null && rq.getRequest().getRpcRequest() != null
+                    && rq.getRequest().getRpcRequest().getHeader() != null) {
+                System.out.println(rq.getRequest().getRpcRequest().getHeader().toString());
+            } else {
+                System.out.println("(RPC) Request is null");
+            }
             final String fileId = (String) rq.getArgs()[0];
             final StripingPolicyImpl sp = (StripingPolicyImpl) rq.getArgs()[1];
             final long snapTimestamp = (Long) rq.getArgs()[2];
@@ -300,10 +306,10 @@ public class StorageThread extends Stage {
             InternalGmax gmax = InternalGmax.newBuilder().setEpoch(fi.getTruncateEpoch()).setFileSize(
                 fileSize).setLastObjectId(lastObj).build();
             
-            System.out.println(System.currentTimeMillis() + "StorageThread - processGetGmax - complete");
+            System.out.println(System.currentTimeMillis() + " StorageThread - processGetGmax - complete");
             cback.gmaxComplete(gmax, null);
         } catch (IOException ex) {
-            System.out.println(System.currentTimeMillis() + "StorageThread - processGetGmax - Exception");
+            System.out.println(System.currentTimeMillis() + " StorageThread - processGetGmax - Exception");
             cback.gmaxComplete(null, ErrorUtils.getErrorResponse(ErrorType.ERRNO, POSIXErrno.POSIX_ERROR_EIO,
                 ex.toString()));
         }
