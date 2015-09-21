@@ -45,6 +45,10 @@ public final class InternalGetGmaxOperation extends OSDOperation {
     public void startRequest(final OSDRequest rq) {
         final xtreemfs_internal_get_gmaxRequest args = (xtreemfs_internal_get_gmaxRequest) rq
                 .getRequestArgs();
+
+        System.out.println(System.currentTimeMillis() + "Internal GMAX. Args:");
+        System.out.println(args.toString());
+
         master.getStorageStage().internalGetGmax(
             args.getFileId(),
             rq.getLocationList().getLocalReplica().getStripingPolicy(),
@@ -62,6 +66,7 @@ public final class InternalGetGmaxOperation extends OSDOperation {
     }
     
     public void sendResponse(OSDRequest rq, InternalGmax result) {
+        System.out.println(System.currentTimeMillis() + "Internal GMAX - Send Response");
         rq.sendSuccess(result,null);
     }
 

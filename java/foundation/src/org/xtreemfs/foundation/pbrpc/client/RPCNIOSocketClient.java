@@ -775,8 +775,11 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                                     System.out.println(" ## Q-T vs now: " + rq.getTimeQueued() + " + " + requestTimeout
                                             + " vs " + now);
                                     System.out.println(" ## " + rq.getRequestHeader().toString());
-                                    System.out.println(" ## " + rq.getResponseHeader().toString());
-                                    System.out.println(" ## " + rq.getResponse().toString());
+                                    System.out.println(" ## "
+                                            + (rq.getResponseHeader() == null ? "No Response Header" : rq
+                                                    .getResponseHeader().toString()));
+                                    System.out.println(" ## "
+                                            + (rq.getResponse() == null ? "No Response" : rq.getResponse().toString()));
                                 } else {
                                     // requests are ordered :-)
                                     break;

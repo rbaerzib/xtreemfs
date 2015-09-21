@@ -142,11 +142,11 @@ public abstract class Stage extends LifeCycleThread {
         
         while (!quit) {
             try {
-                final StageRequest op = q.take();
-                
                 if (getName().startsWith("OSD StThr")) {
                     System.out.println(getName() + " queue size: " + q.size());
                 }
+
+                final StageRequest op = q.take();
 
                 processMethod(op);
                 
