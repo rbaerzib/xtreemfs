@@ -83,7 +83,19 @@ public abstract class Stage extends LifeCycleThread {
     protected void enqueueOperation(int stageOp, Object[] args, OSDRequest request, ReusableBuffer createdViewBuffer,
             Object callback) {
         // rq.setEnqueueNanos(System.nanoTime());
-        
+        try {
+            if (getName().startsWith("OSD PreProcSt") && request != null && request.getRpcRequest() != null
+                    && request.getRpcRequest().getHeader() != null) {
+                System.out.println(request.getRpcRequest().getHeader().toString());
+            } else {
+                System.out.println(System.currentTimeMillis() + " Stage - enqueOperation: Req / RPC / Header null for "
+                        + request.getRequestId());
+                System.out.println(" --- StageOp & Args: " + stageOp + " <-> " + args.toString());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         if (request == null) {
             try {
                 q.put(new StageRequest(stageOp, args, request, callback));

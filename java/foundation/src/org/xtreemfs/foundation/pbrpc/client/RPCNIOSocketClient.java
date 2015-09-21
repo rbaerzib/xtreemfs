@@ -774,15 +774,25 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                                 if (rq.getTimeQueued() + requestTimeout < now) {
                                     cancelRq.add(rq);
                                     iter.remove();
-                                    System.out.println("Cancel Send Request: " + rq.getClass());
+                                    System.out.println(now + " Cancel Send Request: " + rq.getClass());
                                     System.out.println(" ## Q-T vs now: " + rq.getTimeQueued() + " + " + requestTimeout
                                             + " vs " + now);
-                                    System.out.println(" ## " + rq.getRequestHeader().toString());
-                                    System.out.println(" ## "
+                                    System.out.println(" ## Duration: " + rq.getDuration());
+                                    System.out.println(" ## RqHeader: " + rq.getRequestHeader().toString());
+                                    System.out.println(" ## RspHeader: "
                                             + (rq.getResponseHeader() == null ? "No Response Header" : rq
                                                     .getResponseHeader().toString()));
-                                    System.out.println(" ## "
-                                            + (rq.getResponse() == null ? "No Response" : rq.getResponse().toString()));
+                                    System.out.println(" ## Rsp: "
+                                            + (rq.getResponse() == null ? "No Response" : rq.getResponse()
+                                                    .getDuration()));
+                                    System.out.println(" ## Endpoint: " + con.getEndpointString());
+                                    try {
+                                        System.out.println(" ## "
+                                                + (rq.getResponse() == null ? "No Response" : rq.getResponse().get()
+                                                        .toString()));
+                                    } catch (Exception e) {
+                                        System.out.println("Exception catch: " + e.getMessage());
+                                    }
                                 } else {
                                     // requests are ordered :-)
                                     break;
