@@ -778,20 +778,41 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                                     System.out.println(" ## Q-T vs now: " + rq.getTimeQueued() + " + " + requestTimeout
                                             + " vs " + now);
                                     System.out.println(" ## Duration: " + rq.getDuration());
-                                    System.out.println(" ## RqHeader: " + rq.getRequestHeader().toString());
-                                    System.out.println(" ## RspHeader: "
-                                            + (rq.getResponseHeader() == null ? "No Response Header" : rq
-                                                    .getResponseHeader().toString()));
-                                    System.out.println(" ## Rsp: "
-                                            + (rq.getResponse() == null ? "No Response" : rq.getResponse()
-                                                    .getDuration()));
-                                    System.out.println(" ## Endpoint: " + con.getEndpointString());
+
                                     try {
-                                        System.out.println(" ## "
+                                        System.out.println(" ## RqHeader: " + rq.getRequestHeader().toString());
+                                    } catch (Exception e) {
+                                        System.out.println(" ## RqHeader: Exception catch: " + e.getMessage());
+                                    }
+
+                                    try {
+                                        System.out.println(" ## RspHeader: "
+                                                + (rq.getResponseHeader() == null ? "No Response Header" : rq
+                                                        .getResponseHeader().toString()));
+                                    } catch (Exception e) {
+                                        System.out.println(" ## RspHeader: Exception catch: " + e.getMessage());
+                                    }
+
+                                    try {
+                                        System.out.println(" ## Rsp: "
+                                                + (rq.getResponse() == null ? "No Response" : rq.getResponse()
+                                                        .getDuration()));
+                                    } catch (Exception e) {
+                                        System.out.println(" ## Rsp-Duration: Exception catch: " + e.getMessage());
+                                    }
+
+                                    try {
+                                        System.out.println(" ## Endpoint: " + con.getEndpointString());
+                                    } catch (Exception e) {
+                                        System.out.println(" ## Endpoint: Exception catch: " + e.getMessage());
+                                    }
+
+                                    try {
+                                        System.out.println(" ## Rsp.toString: "
                                                 + (rq.getResponse() == null ? "No Response" : rq.getResponse().get()
                                                         .toString()));
                                     } catch (Exception e) {
-                                        System.out.println("Exception catch: " + e.getMessage());
+                                        System.out.println(" ## Rsp.toString: Exception catch: " + e.getMessage());
                                     }
                                 } else {
                                     // requests are ordered :-)

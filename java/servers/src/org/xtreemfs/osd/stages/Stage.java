@@ -90,10 +90,14 @@ public abstract class Stage extends LifeCycleThread {
             } else {
                 System.out.println(System.currentTimeMillis() + " Stage - enqueOperation: Req / RPC / Header null for "
                         + request.getRequestId());
-                System.out.println(" --- StageOp & Args: " + stageOp + " <-> " + args.toString());
+                System.out.println(" --- StageOp: " + stageOp);
+                System.out.println(" --- Args: ");
+                for (Object object : args) {
+                    System.out.println(" --- > " + object.toString());
+                }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(" --- Exception catch: " + e.getMessage());
         }
 
         if (request == null) {
