@@ -62,15 +62,17 @@ public final class InternalGetGmaxOperation extends OSDOperation {
                 @Override
                 public void gmaxComplete(InternalGmax result, ErrorResponse error) {
                     if (error != null) {
+                        System.out.println(System.currentTimeMillis() + " Internal GMAX - Send Error");
                         rq.sendError(error);
-                    } else
+                    } else{
+                        System.out.println(System.currentTimeMillis() + " Internal GMAX - Send Response");
                         sendResponse(rq, result);
+                    }
                 }
             });
     }
     
     public void sendResponse(OSDRequest rq, InternalGmax result) {
-        System.out.println(System.currentTimeMillis() + " Internal GMAX - Send Response");
         rq.sendSuccess(result,null);
     }
 

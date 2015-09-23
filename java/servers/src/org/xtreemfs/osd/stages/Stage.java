@@ -31,6 +31,8 @@ public abstract class Stage extends LifeCycleThread {
     
     private final int queueCapacity;
 
+    private boolean                       printOut = false;
+
     /**
      * set to true if stage should shut down
      */
@@ -86,6 +88,15 @@ public abstract class Stage extends LifeCycleThread {
         // rq.setEnqueueNanos(System.nanoTime());
         try {
             if (stageOp == StorageThread.STAGEOP_GET_GMAX) {
+                
+                if(!printOut){
+                    System.out.println("--- Stage - enqueue - Stacktrace:");
+                    Thread.currentThread().getStackTrace().toString();
+                    printOut = true;
+                }
+                
+                System.out.println(" --- STAGEOP_GET_GMAX enqueue");
+
                 if (request != null && request.getRpcRequest() != null && request.getRpcRequest().getHeader() != null) {
                     System.out.println(" --- " + request.getRpcRequest().getHeader().toString());
                 } else {

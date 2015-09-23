@@ -757,6 +757,7 @@ public class OSDRequestDispatcher implements RPCServerRequestListener, LifeCycle
         RPCHeader hdr = rq.getHeader();
 
         if (hdr.getMessageType() != MessageType.RPC_REQUEST) {
+            Logging.logMessage(Logging.LEVEL_ERROR, this, "NO RPC Req: " + hdr.getCallId());
             rq.sendError(ErrorType.GARBAGE_ARGS, POSIXErrno.POSIX_ERROR_EIO,
                     "expected RPC request message type but got " + hdr.getMessageType());
             return;
@@ -765,6 +766,7 @@ public class OSDRequestDispatcher implements RPCServerRequestListener, LifeCycle
         final RPCHeader.RequestHeader rqHdr = hdr.getRequestHeader();
 
         if (rqHdr.getInterfaceId() != OSDServiceConstants.INTERFACE_ID) {
+            Logging.logMessage(Logging.LEVEL_ERROR, this, "WRONG INTERFACE ID: " + rqHdr.getProcId() + " call_id: " + hdr.getCallId());
             rq.sendError(
                     ErrorType.INVALID_INTERFACE_ID,
                     POSIXErrno.POSIX_ERROR_EIO,
@@ -776,6 +778,7 @@ public class OSDRequestDispatcher implements RPCServerRequestListener, LifeCycle
             OSDRequest request = new OSDRequest(rq);
             if (Logging.isDebug())
                 Logging.logMessage(Logging.LEVEL_DEBUG, Category.stage, this, "received new request: %s", rq.toString());
+
             preprocStage.prepareRequest(request, new PreprocStage.ParseCompleteCallback() {
 
                 @Override
