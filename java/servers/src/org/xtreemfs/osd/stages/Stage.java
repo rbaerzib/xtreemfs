@@ -20,6 +20,7 @@ import org.xtreemfs.foundation.logging.Logging;
 import org.xtreemfs.foundation.logging.Logging.Category;
 import org.xtreemfs.foundation.pbrpc.generatedinterfaces.RPC.RPCHeader.ErrorResponse;
 import org.xtreemfs.osd.OSDRequest;
+import org.xtreemfs.osd.storage.StorageThread;
 
 public abstract class Stage extends LifeCycleThread {
     
@@ -84,13 +85,12 @@ public abstract class Stage extends LifeCycleThread {
             Object callback) {
         // rq.setEnqueueNanos(System.nanoTime());
         try {
-            if (getName().startsWith("OSD PreProcSt") && request != null && request.getRpcRequest() != null
-                    && request.getRpcRequest().getHeader() != null) {
-                System.out.println(request.getRpcRequest().getHeader().toString());
-            } else {
-                System.out.println(System.currentTimeMillis() + " Stage - enqueOperation: Req / RPC / Header null for "
-                        + request.getRequestId());
-                System.out.println(" --- StageOp: " + stageOp);
+            if (stageOp == StorageThread.STAGEOP_GET_GMAX) {
+                if (request != null && request.getRpcRequest() != null && request.getRpcRequest().getHeader() != null) {
+                    System.out.println(" --- " + request.getRpcRequest().getHeader().toString());
+                } else {
+                    System.out.println(" --- RpcReq / Header null");
+                }
             }
         } catch (Exception e) {
             System.out.println(" --- Exception catch: " + e.getMessage());
