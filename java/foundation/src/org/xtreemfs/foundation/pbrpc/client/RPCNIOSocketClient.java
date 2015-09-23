@@ -761,6 +761,13 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                                     System.out.println(now + " Cancel In Request: " + rq.getClass());
                                     System.out.println(" ## Cur In Request size: " + con.getRequests().values().size());
                                     System.out.println(" ## " + rq.getRequestHeader().toString());
+
+                                    try {
+                                        System.out.println(" ## Endpoint(in): " + con.getEndpointString());
+                                    } catch (Exception e) {
+                                        System.out.println(" ## Endpoint(in): Exception catch: " + e.getMessage());
+                                    }
+
                                 }
                             }
 
