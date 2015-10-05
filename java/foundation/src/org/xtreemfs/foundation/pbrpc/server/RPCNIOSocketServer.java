@@ -458,6 +458,19 @@ public class RPCNIOSocketServer extends LifeCycleThread implements RPCServerInte
                             Logging.logMessage(Logging.LEVEL_DEBUG, Category.net, this,
                                 "request received");
                         pendingRequests++;
+
+                        if (rq.getHeader() != null && rq.getHeader().getRequestHeader() != null
+                                && rq.getHeader().getRequestHeader().getProcId() == 40) {
+
+                            Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " ### Request received");
+                            Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " ### RqHeader: "
+                                    + rq.getHeader().getRequestHeader());
+                            if (rq.getConnection() != null && rq.getConnection().getSender() != null) {
+                                Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " ### Endpoint: "
+                                        + rq.getConnection().getSender().toString());
+                            }
+                        }
+
                         if (!receiveRequest(key, rq, con)) {
                             closeConnection(key);
                             return;
