@@ -756,70 +756,92 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                             while (iter.hasNext()) {
                                 final RPCClientRequest rq = iter.next();
                                 if (rq.getTimeQueued() + requestTimeout < now) {
+                                    Logging.logMessage(Logging.LEVEL_INFO, Category.all, this,
+                                            " ## Cur In Request size: " + con.getRequests().values().size());
                                     cancelRq.add(rq);
                                     iter.remove();
-                                    System.out.println(now + " Cancel In Request: " + rq.getClass());
-                                    System.out.println(" ## Cur In Request size: " + con.getRequests().values().size());
-                                    System.out.println(" ## " + rq.getRequestHeader().toString());
+                                    Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, now
+                                            + " Cancel In Request: " + rq.getClass());
+                                    Logging.logMessage(Logging.LEVEL_INFO, Category.all, this,
+                                            " ## Q-T vs now: " + rq.getTimeQueued() + " + " + requestTimeout
+                                            + " vs " + now);
+                                    try {
+                                        Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " ## RqHeader: "
+                                                + rq.getRequestHeader().toString());
+                                    } catch (Exception e) {
+                                        Logging.logMessage(Logging.LEVEL_INFO, Category.all, this,
+                                                " ## RqHeader: Exception catch: " + e.getMessage());
+                                    }
 
                                     try {
-                                        System.out.println(" ## Endpoint(in): " + con.getEndpointString());
+                                        Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " ## Endpoint(in): "
+                                                + con.getEndpointString());
                                     } catch (Exception e) {
-                                        System.out.println(" ## Endpoint(in): Exception catch: " + e.getMessage());
+                                        Logging.logMessage(Logging.LEVEL_INFO, Category.all, this,
+                                                " ## Endpoint(in): Exception catch: " + e.getMessage());
                                     }
 
                                 }
                             }
 
-                            if (con.getSendQueue().size() != 0) {
-                                System.out.println(now + " Cur Send Request size: "
-                                        + con.getSendQueue().size());
-                            }
                             iter = con.getSendQueue().iterator();
                             while (iter.hasNext()) {
                                 final RPCClientRequest rq = iter.next();
                                 if (rq.getTimeQueued() + requestTimeout < now) {
+                                    Logging.logMessage(Logging.LEVEL_INFO, Category.all, this,
+                                            " Cur Send Request size: " + con.getSendQueue().size());
                                     cancelRq.add(rq);
                                     iter.remove();
-                                    System.out.println(now + " Cancel Send Request: " + rq.getClass());
-                                    System.out.println(" ## Q-T vs now: " + rq.getTimeQueued() + " + " + requestTimeout
-                                            + " vs " + now);
-                                    System.out.println(" ## Duration: " + rq.getDuration());
+                                    Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " Cancel Send Request: "
+                                            + rq.getClass());
+                                    Logging.logMessage(Logging.LEVEL_INFO, Category.all, this,
+                                            " ## Q-T vs now: " + rq.getTimeQueued() + " + " + requestTimeout + " vs "
+                                                    + now);
+                                    Logging.logMessage(Logging.LEVEL_INFO, Category.all, this,
+                                            " ## Duration: " + rq.getDuration());
 
                                     try {
-                                        System.out.println(" ## RqHeader: " + rq.getRequestHeader().toString());
+                                        Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " ## RqHeader: "
+                                                + rq.getRequestHeader().toString());
                                     } catch (Exception e) {
-                                        System.out.println(" ## RqHeader: Exception catch: " + e.getMessage());
+                                        Logging.logMessage(Logging.LEVEL_INFO, Category.all, this,
+                                                " ## RqHeader: Exception catch: " + e.getMessage());
                                     }
 
                                     try {
-                                        System.out.println(" ## RspHeader: "
+                                        Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " ## RspHeader: "
                                                 + (rq.getResponseHeader() == null ? "No Response Header" : rq
                                                         .getResponseHeader().toString()));
                                     } catch (Exception e) {
-                                        System.out.println(" ## RspHeader: Exception catch: " + e.getMessage());
+                                        Logging.logMessage(Logging.LEVEL_INFO, Category.all, this,
+                                                " ## RspHeader: Exception catch: " + e.getMessage());
                                     }
 
                                     try {
-                                        System.out.println(" ## Rsp: "
+                                        Logging.logMessage(Logging.LEVEL_INFO, Category.all, this,
+                                                " ## Rsp: "
                                                 + (rq.getResponse() == null ? "No Response" : rq.getResponse()
                                                         .getDuration()));
                                     } catch (Exception e) {
-                                        System.out.println(" ## Rsp-Duration: Exception catch: " + e.getMessage());
+                                        Logging.logMessage(Logging.LEVEL_INFO, Category.all, this,
+                                                " ## Rsp-Duration: Exception catch: " + e.getMessage());
                                     }
 
                                     try {
-                                        System.out.println(" ## Endpoint: " + con.getEndpointString());
+                                        Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " ## Endpoint: "
+                                                + con.getEndpointString());
                                     } catch (Exception e) {
-                                        System.out.println(" ## Endpoint: Exception catch: " + e.getMessage());
+                                        Logging.logMessage(Logging.LEVEL_INFO, Category.all, this,
+                                                " ## Endpoint: Exception catch: " + e.getMessage());
                                     }
 
                                     try {
-                                        System.out.println(" ## Rsp.toString: "
+                                        Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " ## Rsp.toString: "
                                                 + (rq.getResponse() == null ? "No Response" : rq.getResponse().get()
                                                         .toString()));
                                     } catch (Exception e) {
-                                        System.out.println(" ## Rsp.toString: Exception catch: " + e.getMessage());
+                                        Logging.logMessage(Logging.LEVEL_INFO, Category.all, this,
+                                                " ## Rsp.toString: Exception catch: " + e.getMessage());
                                     }
                                 } else {
                                     // requests are ordered :-)

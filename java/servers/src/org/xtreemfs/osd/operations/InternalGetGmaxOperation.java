@@ -12,6 +12,8 @@ import org.xtreemfs.common.Capability;
 import org.xtreemfs.common.uuids.ServiceUUID;
 import org.xtreemfs.common.xloc.InvalidXLocationsException;
 import org.xtreemfs.common.xloc.XLocations;
+import org.xtreemfs.foundation.logging.Logging;
+import org.xtreemfs.foundation.logging.Logging.Category;
 import org.xtreemfs.foundation.pbrpc.generatedinterfaces.RPC.ErrorType;
 import org.xtreemfs.foundation.pbrpc.generatedinterfaces.RPC.POSIXErrno;
 import org.xtreemfs.foundation.pbrpc.generatedinterfaces.RPC.RPCHeader.ErrorResponse;
@@ -46,11 +48,12 @@ public final class InternalGetGmaxOperation extends OSDOperation {
         final xtreemfs_internal_get_gmaxRequest args = (xtreemfs_internal_get_gmaxRequest) rq
                 .getRequestArgs();
 
-        System.out.println(System.currentTimeMillis() + " Internal GMAX. FileID: " + args.getFileId());
+        Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, System.currentTimeMillis()
+                + " Internal GMAX. FileID: " + args.getFileId());
         if (rq.getRpcRequest() != null) {
-            System.out.println(rq.getRpcRequest().getHeader().toString());
+            Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, rq.getRpcRequest().getHeader().toString());
         } else {
-            System.out.println("RPC Request is null");
+            Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, "RPC Request is null");
         }
 
         master.getStorageStage().internalGetGmax(
@@ -62,10 +65,12 @@ public final class InternalGetGmaxOperation extends OSDOperation {
                 @Override
                 public void gmaxComplete(InternalGmax result, ErrorResponse error) {
                     if (error != null) {
-                        System.out.println(System.currentTimeMillis() + " Internal GMAX - Send Error");
+                            Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, System.currentTimeMillis()
+                                    + " Internal GMAX - Send Error");
                         rq.sendError(error);
                     } else{
-                        System.out.println(System.currentTimeMillis() + " Internal GMAX - Send Response");
+                            Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, System.currentTimeMillis()
+                                    + " Internal GMAX - Send Response");
                         sendResponse(rq, result);
                     }
                 }

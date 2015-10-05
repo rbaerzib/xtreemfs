@@ -90,21 +90,22 @@ public abstract class Stage extends LifeCycleThread {
             if (stageOp == StorageThread.STAGEOP_GET_GMAX) {
                 
                 if(!printOut){
-                    System.out.println("--- Stage - enqueue - Stacktrace:");
+                    Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, "--- Stage - enqueue - Stacktrace:");
                     Thread.currentThread().getStackTrace().toString();
                     printOut = true;
                 }
                 
-                System.out.println(" --- STAGEOP_GET_GMAX enqueue");
+                Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " --- STAGEOP_GET_GMAX enqueue");
 
                 if (request != null && request.getRpcRequest() != null && request.getRpcRequest().getHeader() != null) {
-                    System.out.println(" --- " + request.getRpcRequest().getHeader().toString());
+                    Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " --- "
+                            + request.getRpcRequest().getHeader().toString());
                 } else {
-                    System.out.println(" --- RpcReq / Header null");
+                    Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " --- RpcReq / Header null");
                 }
             }
         } catch (Exception e) {
-            System.out.println(" --- Exception catch: " + e.getMessage());
+            Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " --- Exception catch: " + e.getMessage());
         }
 
         if (request == null) {
@@ -166,7 +167,7 @@ public abstract class Stage extends LifeCycleThread {
         while (!quit) {
             try {
                 if (getName().startsWith("OSD StThr") && q.size() != 0) {
-                    System.out.println(getName() + " queue size: " + q.size());
+                    Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, getName() + " queue size: " + q.size());
                 }
 
                 final StageRequest op = q.take();

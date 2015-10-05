@@ -132,12 +132,15 @@ public class PreprocStage extends Stage {
             if (request != null && request.getRpcRequest() != null && request.getRpcRequest().getHeader() != null
                     && request.getRpcRequest().getHeader().getRequestHeader() != null) {
                 if (request.getRpcRequest().getHeader().getRequestHeader().getProcId() == 40) { // GET GMAX
-                    System.out.println(" ~~~ PreProc: enqueue GET GMAX to PreProc: parse_Auth:");
-                    System.out.println(" ~~~ call_id: " + request.getRpcRequest().getHeader().getCallId());
+                    Logging.logMessage(Logging.LEVEL_INFO, Category.all, this,
+                            " ~~~ PreProc: enqueue GET GMAX to PreProc: parse_Auth:");
+                    Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " ~~~ call_id: "
+                            + request.getRpcRequest().getHeader().getCallId());
                 }
             }
         } catch (Exception e) {
-            System.out.println(" ~~~ PreProc: prepareReq Exception: " + e.getMessage());
+            Logging.logMessage(Logging.LEVEL_INFO, Category.all, this,
+                    " ~~~ PreProc: prepareReq Exception: " + e.getMessage());
         }
 
         this.enqueueOperation(STAGEOP_PARSE_AUTH_OFTOPEN, new Object[] { request }, null, listener);
@@ -654,8 +657,8 @@ public class PreprocStage extends Stage {
         // depending on the result the event listener is sent
         if (!isValid) {
             if (rqCap.hasExpired()) {
-                System.out.println(rq.toString());
-                System.out.println(rqCap.toString());
+                Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, rq.toString());
+                Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, rqCap.toString());
                 System.out.println(Thread.currentThread().getStackTrace());
 
                 return ErrorUtils.getErrorResponse(ErrorType.ERRNO, POSIXErrno.POSIX_ERROR_EACCES, "capability is not valid (timed out)");
