@@ -397,7 +397,7 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                             localBindPoint);
                 }
                 if (Logging.isDebug()) {
-                    Logging.logMessage(Logging.LEVEL_DEBUG, Category.net, this, "cannot contact server %s",
+                    Logging.logMessage(Logging.INFO, Category.net, this, "cannot contact server %s",
                         con.getEndpointString());
                 }
                 con.connectFailed();
@@ -410,7 +410,7 @@ public class RPCNIOSocketClient extends LifeCycleThread {
             }
         } else {
             if (Logging.isDebug()) {
-                Logging.logMessage(Logging.LEVEL_DEBUG, Category.net, this,
+                Logging.logMessage(Logging.LEVEL_INFO, Category.net, this,
                     "reconnect to server still blocked locally to avoid flooding (server: %s)", con.getEndpointString());
             }
             synchronized (con) {
@@ -700,6 +700,10 @@ public class RPCNIOSocketClient extends LifeCycleThread {
         final RPCClientConnection con = (RPCClientConnection) key.attachment();
         final ChannelIO channel = con.getChannel();
         
+        if (errorMessage != null && !errorMessage.isEmpty()) {
+            Logging.logMessage(Logging.LEVEL_INFO, Category.net, this, "Close Connection due to error: " + errorMessage);
+        }
+
         List<RPCClientRequest> cancelRq = new LinkedList<RPCClientRequest>();
         synchronized (con) {
             // remove the connection from the selector and close socket
