@@ -397,7 +397,7 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                             localBindPoint);
                 }
                 if (Logging.isDebug()) {
-                    Logging.logMessage(Logging.INFO, Category.net, this, "cannot contact server %s",
+                    Logging.logMessage(Logging.LEVEL_INFO, Category.net, this, "cannot contact server %s",
                         con.getEndpointString());
                 }
                 con.connectFailed();
