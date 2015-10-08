@@ -267,8 +267,8 @@ public class StorageThread extends Stage {
             Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " StorageThread - processGetGmax");
             if (rq.getRequest() != null && rq.getRequest().getRpcRequest() != null
                     && rq.getRequest().getRpcRequest().getHeader() != null) {
-                Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, rq.getRequest().getRpcRequest().getHeader()
-                        .toString());
+                Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " call_id: "
+                        + rq.getRequest().getRpcRequest().getHeader().getCallId());
             } else {
                 Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, "(RPC) Request is null");
             }

@@ -766,8 +766,8 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                                             " ## Q-T vs now: " + rq.getTimeQueued() + " + " + requestTimeout
                                             + " vs " + now);
                                     try {
-                                        Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " ## RqHeader: "
-                                                + rq.getRequestHeader().toString());
+                                        Logging.logMessage(Logging.LEVEL_INFO, Category.all, this,
+                                                " ## RqHeader: call_id: " + rq.getRequestHeader().getCallId());
                                     } catch (Exception e) {
                                         Logging.logMessage(Logging.LEVEL_INFO, Category.all, this,
                                                 " ## RqHeader: Exception catch: " + e.getMessage());
@@ -801,8 +801,8 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                                             " ## Duration: " + rq.getDuration());
 
                                     try {
-                                        Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " ## RqHeader: "
-                                                + rq.getRequestHeader().toString());
+                                        Logging.logMessage(Logging.LEVEL_INFO, Category.all, this,
+                                                " ## RqHeader: call_id: " + rq.getRequestHeader().getCallId());
                                     } catch (Exception e) {
                                         Logging.logMessage(Logging.LEVEL_INFO, Category.all, this,
                                                 " ## RqHeader: Exception catch: " + e.getMessage());
