@@ -98,11 +98,13 @@ public abstract class Stage extends LifeCycleThread {
                 Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " --- STAGEOP_GET_GMAX enqueue");
 
                 if (request != null && request.getRpcRequest() != null && request.getRpcRequest().getHeader() != null) {
-                    Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " --- "
-                            + request.getRpcRequest().getHeader().toString());
+                    Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " --- call_id: "
+                            + request.getRpcRequest().getHeader().getCallId());
                 } else {
                     Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " --- RpcReq / Header null");
                 }
+
+                Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " --- Queue-Size (before): " + q.size());
             }
         } catch (Exception e) {
             Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " --- Exception catch: " + e.getMessage());
@@ -139,6 +141,11 @@ public abstract class Stage extends LifeCycleThread {
                 request.sendInternalServerError(new IllegalStateException("server overloaded, request dropped"));
             }
         }
+
+        if (stageOp == StorageThread.STAGEOP_GET_GMAX) {
+            Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " --- Queue-Size (after): " + q.size());
+        }
+
     }
     
     /**
