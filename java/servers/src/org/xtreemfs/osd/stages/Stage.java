@@ -86,46 +86,51 @@ public abstract class Stage extends LifeCycleThread {
     protected void enqueueOperation(int stageOp, Object[] args, OSDRequest request, ReusableBuffer createdViewBuffer,
             Object callback) {
         // rq.setEnqueueNanos(System.nanoTime());
+        String logMessage = "";
+        int queueSize = q.size();
         try {
             if (stageOp == StorageThread.STAGEOP_GET_GMAX) {
                 
                 if(!printOut){
-                    Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, "--- Stage - enqueue - Stacktrace:");
+                    logMessage += "\n--- Stage - enqueue - Stacktrace:";
                     Thread.currentThread().getStackTrace().toString();
                     printOut = true;
                 }
                 
-                Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " --- STAGEOP_GET_GMAX enqueue");
+                logMessage += "\n--- STAGEOP_GET_GMAX enqueue";
 
                 if (request != null && request.getRpcRequest() != null && request.getRpcRequest().getHeader() != null) {
-                    Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " --- call_id: "
-                            + request.getRpcRequest().getHeader().getCallId());
+                    logMessage += "\n--- call_id: " + request.getRpcRequest().getHeader().getCallId();
                 } else {
-                    Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " --- RpcReq / Header null");
+                    logMessage += "\n--- RpcReq / Header null";
                 }
 
-                Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " --- Queue-Size (before): " + q.size());
+                logMessage += "\n--- Queue-Size (before): " + q.size();
             }
         } catch (Exception e) {
-            Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " --- Exception catch: " + e.getMessage());
+            logMessage += "\n--- Exception catch: " + e.getMessage();
+        } finally {
+            if (!logMessage.isEmpty()) {
+                Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, logMessage);
+            }
         }
 
         if (request == null) {
             try {
                 q.put(new StageRequest(stageOp, args, request, callback));
             } catch (InterruptedException e) {
-                Logging.logMessage(Logging.LEVEL_DEBUG, Category.stage, this,
+                Logging.logMessage(Logging.LEVEL_INFO, Category.stage, this,
                         "Failed to queue internal request due to InterruptedException:");
-                Logging.logError(Logging.LEVEL_DEBUG, this, e);
+                Logging.logError(Logging.LEVEL_INFO, this, e);
             }
         } else {
             if (q.size() < queueCapacity) {
                 try {
                     q.put(new StageRequest(stageOp, args, request, callback));
                 } catch (InterruptedException e) {
-                    Logging.logMessage(Logging.LEVEL_DEBUG, Category.stage, this,
+                    Logging.logMessage(Logging.LEVEL_INFO, Category.stage, this,
                             "Failed to queue external request due to InterruptedException:");
-                    Logging.logError(Logging.LEVEL_DEBUG, this, e);
+                    Logging.logError(Logging.LEVEL_INFO, this, e);
                 }
             } else {
                 // Make sure that the data buffer is returned to the pool if
@@ -142,10 +147,9 @@ public abstract class Stage extends LifeCycleThread {
             }
         }
 
-        if (stageOp == StorageThread.STAGEOP_GET_GMAX) {
+        if (stageOp == StorageThread.STAGEOP_GET_GMAX && q.size() != (queueSize + 1)) {
             Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " --- Queue-Size (after): " + q.size());
         }
-
     }
     
     /**

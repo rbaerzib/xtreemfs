@@ -263,15 +263,17 @@ public class StorageThread extends Stage {
     
     private void processGetGmax(StageRequest rq) {
         final InternalGetGmaxCallback cback = (InternalGetGmaxCallback) rq.getCallback();
+        String logMessage = "**** StorageThread - processGetGmax";
         try {
-            Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " StorageThread - processGetGmax");
             if (rq.getRequest() != null && rq.getRequest().getRpcRequest() != null
                     && rq.getRequest().getRpcRequest().getHeader() != null) {
-                Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " call_id: "
-                        + rq.getRequest().getRpcRequest().getHeader().getCallId());
+                logMessage += "\n**** call_id: "
+                        + rq.getRequest().getRpcRequest().getHeader().getCallId();
             } else {
-                Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, "(RPC) Request is null");
+                logMessage += "\n**** (RPC) Request is null";
             }
+            
+            
             final String fileId = (String) rq.getArgs()[0];
             final StripingPolicyImpl sp = (StripingPolicyImpl) rq.getArgs()[1];
             final long snapTimestamp = (Long) rq.getArgs()[2];
@@ -307,10 +309,12 @@ public class StorageThread extends Stage {
             InternalGmax gmax = InternalGmax.newBuilder().setEpoch(fi.getTruncateEpoch()).setFileSize(
                 fileSize).setLastObjectId(lastObj).build();
             
-            Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " StorageThread - processGetGmax - complete");
+            logMessage += "\n**** StorageThread - processGetGmax - complete";
+            Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, logMessage);
             cback.gmaxComplete(gmax, null);
         } catch (IOException ex) {
-            Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " StorageThread - processGetGmax - Exception");
+            logMessage += "\n**** StorageThread - processGetGmax - Exception: " + ex.toString();
+            Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, logMessage);
             cback.gmaxComplete(null, ErrorUtils.getErrorResponse(ErrorType.ERRNO, POSIXErrno.POSIX_ERROR_EIO,
                 ex.toString()));
         }

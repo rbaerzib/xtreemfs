@@ -48,13 +48,14 @@ public final class InternalGetGmaxOperation extends OSDOperation {
         final xtreemfs_internal_get_gmaxRequest args = (xtreemfs_internal_get_gmaxRequest) rq
                 .getRequestArgs();
 
-        Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, System.currentTimeMillis()
-                + " Internal GMAX. FileID: " + args.getFileId());
+        String logMessage = "$$$ Internal GMAX. FileID: " + args.getFileId();
         if (rq.getRpcRequest() != null) {
-            Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, rq.getRpcRequest().getHeader().toString());
+            logMessage += "\n$$$ call_id: " + rq.getRpcRequest().getHeader().getCallId();
         } else {
-            Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, "RPC Request is null");
+            logMessage += "\n$$$ RPC Request is null";
         }
+
+        Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, logMessage);
 
         master.getStorageStage().internalGetGmax(
             args.getFileId(),
