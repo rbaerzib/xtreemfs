@@ -128,19 +128,21 @@ public class PreprocStage extends Stage {
     }
     
     public void prepareRequest(OSDRequest request, ParseCompleteCallback listener) {
+        String logMessage = "";
         try {
             if (request != null && request.getRpcRequest() != null && request.getRpcRequest().getHeader() != null
                     && request.getRpcRequest().getHeader().getRequestHeader() != null) {
                 if (request.getRpcRequest().getHeader().getRequestHeader().getProcId() == 40) { // GET GMAX
-                    Logging.logMessage(Logging.LEVEL_INFO, Category.all, this,
-                            " ~~~ PreProc: enqueue GET GMAX to PreProc: parse_Auth:");
-                    Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, " ~~~ call_id: "
-                            + request.getRpcRequest().getHeader().getCallId());
+                    logMessage += "\n~~~ PreProc: enqueue GET GMAX to PreProc: parse_Auth:";
+                    logMessage += "\n~~~ call_id: " + request.getRpcRequest().getHeader().getCallId();
                 }
             }
         } catch (Exception e) {
-            Logging.logMessage(Logging.LEVEL_INFO, Category.all, this,
-                    " ~~~ PreProc: prepareReq Exception: " + e.getMessage());
+            logMessage += "\n~~~ PreProc: prepareReq Exception: " + e.getMessage();
+        } finally {
+            if (!logMessage.isEmpty()) {
+                Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, logMessage);
+            }
         }
 
         this.enqueueOperation(STAGEOP_PARSE_AUTH_OFTOPEN, new Object[] { request }, null, listener);
