@@ -177,7 +177,7 @@ public abstract class Stage extends LifeCycleThread {
         
         while (!quit) {
             try {
-                if (getName().startsWith("OSD StThr") && q.size() != 0) {
+                if (getName().startsWith("OSD StThr") && q.size() > 10) {
                     Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, getName() + " queue size: " + q.size());
                 }
 
