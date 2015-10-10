@@ -41,6 +41,8 @@ public abstract class Stage extends LifeCycleThread {
     public AtomicInteger                  _numRq, _maxRqTime, _minRqTime;
     
     public AtomicLong                     _sumRqTime;
+
+    private StageRequest                  op;
     
     public Stage(String stageName, int queueCapacity) {
         
@@ -88,6 +90,8 @@ public abstract class Stage extends LifeCycleThread {
         // rq.setEnqueueNanos(System.nanoTime());
         String logMessage = "";
         int queueSize = q.size();
+        boolean printQueue = false;
+        int printQueueCounter = 0;
         try {
             if (stageOp == StorageThread.STAGEOP_GET_GMAX) {
                 
@@ -97,15 +101,39 @@ public abstract class Stage extends LifeCycleThread {
                     printOut = true;
                 }
                 
-                logMessage += "\n--- STAGEOP_GET_GMAX enqueue on " + getName();
+                logMessage += "\n --- STAGEOP_GET_GMAX enqueue on " + getName();
 
                 if (request != null && request.getRpcRequest() != null && request.getRpcRequest().getHeader() != null) {
-                    logMessage += "\n--- call_id: " + request.getRpcRequest().getHeader().getCallId();
+                    logMessage += "\n --- call_id: " + request.getRpcRequest().getHeader().getCallId() + " #";
                 } else {
-                    logMessage += "\n--- RpcReq / Header null";
+                    logMessage += "\n --- RpcReq / Header null";
                 }
 
-                logMessage += "\n--- Queue-Size (before): " + q.size();
+                logMessage += "\n --- Queue-Size (before): " + queueSize;
+                if (queueSize > 5 && !printQueue && printQueueCounter < 5) {
+                    printQueue = true;
+                    printQueueCounter++;
+                    logMessage += "\n --- Queue Size > 5, listing Queue: ";
+                    if (op != null) {
+                        logMessage += "\n --- Current Op: " + op.getStageMethod();
+                        if (op.getRequest() != null && op.getRequest().getRpcRequest() != null) {
+                            logMessage += "\n" + op.getRequest().getRpcRequest().toString();
+                        } else {
+                            logMessage += "\nCouldn't get RpcRequest";
+                        }
+                    }
+                    StageRequest req = q.peek();
+                    if (req != null) {
+                        logMessage += "\n --- Next Req: " + req.getStageMethod();
+                        if (req.getRequest() != null && req.getRequest().getRpcRequest() != null) {
+                            logMessage += "\n" + req.getRequest().getRpcRequest().toString();
+                        } else {
+                            logMessage += "\nCouldn't get RpcRequest";
+                        }
+                    }
+                } else {
+                    printQueue = false;
+                }
             }
         } catch (Exception e) {
             logMessage += "\n--- Exception catch: " + e.getMessage();
@@ -181,7 +209,7 @@ public abstract class Stage extends LifeCycleThread {
                     Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, getName() + " queue size: " + q.size());
                 }
 
-                final StageRequest op = q.take();
+                op = q.take();
 
                 processMethod(op);
                 
