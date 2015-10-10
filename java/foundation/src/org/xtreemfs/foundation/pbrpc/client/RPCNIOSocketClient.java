@@ -628,6 +628,13 @@ public class RPCNIOSocketClient extends LifeCycleThread {
 
                         // remove from queue
                         synchronized (con) {
+                            if (send.getRequestHeader().getRequestHeader() != null
+                                    && send.getRequestHeader().getRequestHeader().getProcId() == 40) {
+                                String logMessage = " %% Send out GET GMAX Request";
+                                logMessage += "\n call_id: " + send.getRequestHeader().getCallId();
+                                logMessage += "\n Endpoint: " + con.getEndpointString();
+                                Logging.logMessage(Logging.LEVEL_INFO, Category.net, this, logMessage);
+                            }
                             con.addRequest(send.getRequestHeader().getCallId(), send);
                             if (Logging.isDebug()) {
                                 Logging.logMessage(Logging.LEVEL_DEBUG, Category.net, this, "sent request %d to %s",

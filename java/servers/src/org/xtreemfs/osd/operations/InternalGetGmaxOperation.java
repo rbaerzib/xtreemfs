@@ -73,6 +73,7 @@ public final class InternalGetGmaxOperation extends OSDOperation {
                             Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, System.currentTimeMillis()
                                     + " Internal GMAX - Send Response");
                         sendResponse(rq, result);
+                            System.out.println(System.currentTimeMillis() + " Internal GMAX - Response Sent");
                     }
                 }
             });

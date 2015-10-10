@@ -97,7 +97,7 @@ public abstract class Stage extends LifeCycleThread {
                     printOut = true;
                 }
                 
-                logMessage += "\n--- STAGEOP_GET_GMAX enqueue";
+                logMessage += "\n--- STAGEOP_GET_GMAX enqueue on " + getName();
 
                 if (request != null && request.getRpcRequest() != null && request.getRpcRequest().getHeader() != null) {
                     logMessage += "\n--- call_id: " + request.getRpcRequest().getHeader().getCallId();
