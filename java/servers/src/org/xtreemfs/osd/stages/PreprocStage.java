@@ -660,6 +660,7 @@ public class PreprocStage extends Stage {
         if (!isValid) {
             if (rqCap.hasExpired()) {
                 String logMessage = "=== PreProc: Request invalid - expired:";
+                logMessage += "\n === ProcId: " + rq.getRpcRequest().getHeader().getRequestHeader().getProcId();
                 logMessage += "\n === call_id: " + rq.getRpcRequest().getHeader().getCallId();
                 logMessage += "\n === XCap: \n " + rqCap.toString();
                 Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, logMessage);
