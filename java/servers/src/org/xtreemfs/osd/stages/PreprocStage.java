@@ -659,9 +659,10 @@ public class PreprocStage extends Stage {
         // depending on the result the event listener is sent
         if (!isValid) {
             if (rqCap.hasExpired()) {
-                Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, rq.toString());
-                Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, rqCap.toString());
-                System.out.println(Thread.currentThread().getStackTrace());
+                String logMessage = "=== PreProc: Request invalid - expired:";
+                logMessage += "\n === call_id: " + rq.getRpcRequest().getHeader().getCallId();
+                logMessage += "\n === XCap: \n " + rqCap.toString();
+                Logging.logMessage(Logging.LEVEL_INFO, Category.all, this, logMessage);
 
                 return ErrorUtils.getErrorResponse(ErrorType.ERRNO, POSIXErrno.POSIX_ERROR_EACCES, "capability is not valid (timed out)");
             }
