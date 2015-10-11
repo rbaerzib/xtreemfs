@@ -174,6 +174,21 @@ public final class ReadOperation extends OSDOperation {
                 final List<ServiceUUID> osds = rq.getLocationList().getLocalReplica().getOSDs();
                 final RPCResponse[] gmaxRPCs = new RPCResponse[osds.size() - 1];
                 int cnt = 0;
+
+                String logMessage = " ::: ReadOperation: GET GMAX due to stripedRead";
+                if (rq.getRpcRequest() != null && rq.getRpcRequest().getHeader() != null) {
+                    logMessage += "\n ::: call_id: " + rq.getRpcRequest().getHeader().getCallId() + " #";
+                } else {
+                    logMessage += "\n ::: call_id: No RPC Request or Header";
+                }
+                logMessage += "\n ::: objNo: " + objNo + " # lastKnownObject: " + lastKnownObject;
+                logMessage += "\n ::: Endpoint List: ";
+                for (ServiceUUID uuid : osds) {
+                    logMessage += uuid + " , ";
+                }
+
+                Logging.logMessage(Logging.LEVEL_INFO, Category.net, this, logMessage);
+
                 for (ServiceUUID osd : osds) {
                     if (!osd.equals(localUUID)) {
                         gmaxRPCs[cnt++] = master.getOSDClient().xtreemfs_internal_get_gmax(osd.getAddress(), RPCAuthentication.authNone,RPCAuthentication.userService,args.getFileCredentials(),args.getFileId());
