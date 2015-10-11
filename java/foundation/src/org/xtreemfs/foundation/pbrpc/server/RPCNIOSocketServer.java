@@ -463,7 +463,8 @@ public class RPCNIOSocketServer extends LifeCycleThread implements RPCServerInte
                                 && rq.getHeader().getRequestHeader().getProcId() == 40) {
 
                             String logMessage = " ### GET GMAX Request received (Cur pending: " + pendingRequests + ")";
-                            logMessage += "\n### RqHeader: call_id: " + rq.getHeader().getCallId();
+                            logMessage += "\n ### RqHeader: call_id: " + rq.getHeader().getCallId();
+                            logMessage += "\n ### Connection: " + con.toString();
                             if (rq.getConnection() != null && rq.getConnection().getSender() != null) {
                                 logMessage += "\n ### Endpoint: " + rq.getConnection().getSender().toString();
                             }

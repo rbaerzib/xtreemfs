@@ -630,9 +630,10 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                         synchronized (con) {
                             if (send.getRequestHeader().getRequestHeader() != null
                                     && send.getRequestHeader().getRequestHeader().getProcId() == 40) {
-                                String logMessage = " %% Send out GET GMAX Request";
-                                logMessage += "\n call_id: " + send.getRequestHeader().getCallId();
-                                logMessage += "\n Endpoint: " + con.getEndpointString();
+                                String logMessage = " *-+ Send out GET GMAX Request";
+                                logMessage += "\n *-+ call_id: " + send.getRequestHeader().getCallId();
+                                logMessage += "\n *-+ Connection: " + con.toString();
+                                logMessage += "\n *-+ Endpoint: " + con.getEndpointString();
                                 Logging.logMessage(Logging.LEVEL_INFO, Category.net, this, logMessage);
                             }
                             con.addRequest(send.getRequestHeader().getCallId(), send);
