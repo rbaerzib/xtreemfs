@@ -90,8 +90,6 @@ public abstract class Stage extends LifeCycleThread {
         // rq.setEnqueueNanos(System.nanoTime());
         String logMessage = "";
         int queueSize = q.size();
-        boolean printQueue = false;
-        int printQueueCounter = 0;
         try {
             if (stageOp == StorageThread.STAGEOP_GET_GMAX) {
                 
@@ -110,9 +108,7 @@ public abstract class Stage extends LifeCycleThread {
                 }
 
                 logMessage += "\n --- Queue-Size (before): " + queueSize;
-                if (queueSize > 5 && !printQueue && printQueueCounter < 5) {
-                    printQueue = true;
-                    printQueueCounter++;
+                if (queueSize > 5) {
                     logMessage += "\n --- Queue Size > 5, listing Queue: ";
                     if (op != null) {
                         logMessage += "\n --- Current Op: " + op.getStageMethod();
@@ -131,8 +127,6 @@ public abstract class Stage extends LifeCycleThread {
                             logMessage += "\nCouldn't get RpcRequest";
                         }
                     }
-                } else {
-                    printQueue = false;
                 }
             }
         } catch (Exception e) {
