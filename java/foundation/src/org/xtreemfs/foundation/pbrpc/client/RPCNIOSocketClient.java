@@ -184,15 +184,32 @@ public class RPCNIOSocketClient extends LifeCycleThread {
             boolean isEmpty = con.getSendQueue().isEmpty();
             request.queued();
             con.useConnection();
+
+            if (request.getRequestHeader().getRequestHeader() != null
+                    && request.getRequestHeader().getRequestHeader().getProcId() == 40) {
+                String logMessage = " ;-; Add GET GMAX to Send Queue";
+                logMessage += "\n ;-; call_id: " + request.getRequestHeader().getCallId();
+                logMessage += "\n ;-; Endpoint: " + con.getEndpointString();
+                Logging.logMessage(Logging.LEVEL_INFO, Category.net, this, logMessage);
+            }
+
             if (highPriority)
                 con.getSendQueue().add(0, request);
             else
                 con.getSendQueue().add(request);
+            if (request.getRequestHeader().getRequestHeader() != null
+                    && request.getRequestHeader().getRequestHeader().getProcId() == 40) {
+                System.out.println(" ;-; - added");
+            }
 
             if (!con.isConnected()) {
                 establishConnection(server, con);
 
             } else {
+                if (request.getRequestHeader().getRequestHeader() != null
+                        && request.getRequestHeader().getRequestHeader().getProcId() == 40) {
+                    System.out.println(" ;-; connection given and empty: " + isEmpty);
+                }
                 if (isEmpty) {
                     final SelectionKey key = con.getChannel().keyFor(selector);
                     if (key != null) {
@@ -329,9 +346,7 @@ public class RPCNIOSocketClient extends LifeCycleThread {
     private void establishConnection(InetSocketAddress server, RPCClientConnection con) {
 
         if (con.canReconnect()) {
-            if (Logging.isDebug()) {
-                Logging.logMessage(Logging.LEVEL_DEBUG, Category.net, this, "connect to %s", server.toString());
-            }
+            Logging.logMessage(Logging.LEVEL_INFO, Category.net, this, "connect to %s", server.toString());
             ChannelIO channel;
             try {
                 if (sslOptions == null) { // no SSL
@@ -632,7 +647,6 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                                     && send.getRequestHeader().getRequestHeader().getProcId() == 40) {
                                 String logMessage = " *-+ Send out GET GMAX Request";
                                 logMessage += "\n *-+ call_id: " + send.getRequestHeader().getCallId();
-                                logMessage += "\n *-+ Connection: " + con.toString();
                                 logMessage += "\n *-+ Endpoint: " + con.getEndpointString();
                                 Logging.logMessage(Logging.LEVEL_INFO, Category.net, this, logMessage);
                             }
