@@ -16,21 +16,36 @@ public class QuotaFileInformation {
 
     private final String volumeId;
     private final long   fileId;
-    private final String ownerId;
-    private final String ownerGroupId;
-    private final long   fileSize;
+    private final long   filesize;
+
+    private String       ownerId;
+    private String       ownerGroupId;
+    private int          replicaCount;
+
+    /**
+     * Copy constructor
+     * 
+     * @param quotaFileInformation
+     */
+    public QuotaFileInformation(QuotaFileInformation quotaFileInformation) {
+        this(quotaFileInformation.getVolumeId(), quotaFileInformation.getFileId(), quotaFileInformation.getOwnerId(),
+                quotaFileInformation.getOwnerGroupId(), quotaFileInformation.getFilesize(), quotaFileInformation
+                        .getReplicaCount());
+    }
 
     public QuotaFileInformation(String volumeId, FileMetadata fileMetadata) {
         this(volumeId, fileMetadata.getId(), fileMetadata.getOwnerId(), fileMetadata.getOwningGroupId(), fileMetadata
-                .getSize());
+                .getSize(), fileMetadata.getXLocList().getReplicaCount());
     }
 
-    public QuotaFileInformation(String volumeId, long fileId, String ownerId, String ownerGroupId, long fileSize) {
+    public QuotaFileInformation(String volumeId, long fileId, String ownerId, String ownerGroupId, long filesize,
+            int replicaCount) {
         this.volumeId = volumeId;
         this.fileId = fileId;
         this.ownerId = ownerId;
         this.ownerGroupId = ownerGroupId;
-        this.fileSize = fileSize;
+        this.filesize = filesize;
+        this.replicaCount = replicaCount;
     }
 
     /**
@@ -38,8 +53,34 @@ public class QuotaFileInformation {
      * 
      * @return
      */
-    public String getGlobalFileID() {
+    public String getGlobalFileId() {
         return volumeId + ":" + fileId;
+    }
+
+    // Setter:
+
+    /**
+     * @param replicaCount
+     *            the replicaCount to set
+     */
+    public void setReplicaCount(int replicaCount) {
+        this.replicaCount = replicaCount;
+    }
+
+    /**
+     * @param ownerId
+     *            the ownerId to set
+     */
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
+    }
+
+    /**
+     * @param ownerGroupId
+     *            the ownerGroupId to set
+     */
+    public void setOwnerGroupId(String ownerGroupId) {
+        this.ownerGroupId = ownerGroupId;
     }
 
     // Getter:
@@ -75,7 +116,14 @@ public class QuotaFileInformation {
     /**
      * @return the fileSize
      */
-    public long getFileSize() {
-        return fileSize;
+    public long getFilesize() {
+        return filesize;
+    }
+
+    /**
+     * @return the replicaCount
+     */
+    public int getReplicaCount() {
+        return replicaCount;
     }
 }

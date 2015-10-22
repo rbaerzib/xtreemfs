@@ -11,6 +11,7 @@ package org.xtreemfs.common;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import org.xtreemfs.common.quota.QuotaConstants;
 import org.xtreemfs.foundation.TimeSync;
 import org.xtreemfs.foundation.logging.Logging;
 import org.xtreemfs.foundation.util.OutputUtils;
@@ -68,10 +69,9 @@ public class Capability {
         int epochNo, boolean replicateOnClose, SnapConfig snapConfig, long snapTimestamp, String sharedSecret) {
         
         this(fileId, accessMode, validity, expires, clientIdentity, epochNo, replicateOnClose, snapConfig,
-                snapTimestamp, 0, 0, sharedSecret);
+                snapTimestamp, QuotaConstants.UNLIMITED_VOUCHER, 0, sharedSecret);
     }
 
-    // FIXME(baerhold): delete old constructure, if all (test) cases are adapted
     public Capability(String fileId, int accessMode, int validity, long expires, String clientIdentity, int epochNo,
             boolean replicateOnClose, SnapConfig snapConfig, long snapTimestamp, long voucherSize, long expireMS,
             String sharedSecret) {

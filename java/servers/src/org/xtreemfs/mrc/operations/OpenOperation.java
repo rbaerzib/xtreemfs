@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2008-2011 by Bjoern Kolbeck, Jan Stender,
+ *                    2015 by Robert Bärhold
  *               Zuse Institute Berlin
  *
  * Licensed under the BSD License, see LICENSE file for details.
@@ -14,6 +15,7 @@ import java.util.List;
 
 import org.xtreemfs.common.Capability;
 import org.xtreemfs.common.ReplicaUpdatePolicies;
+import org.xtreemfs.common.quota.QuotaConstants;
 import org.xtreemfs.foundation.TimeSync;
 import org.xtreemfs.foundation.logging.Logging;
 import org.xtreemfs.foundation.logging.Logging.Category;
@@ -108,14 +110,14 @@ public class OpenOperation extends MRCOperation {
             
             file = res.getFile();
             
+            if (file.isDirectory() || sMan.getSoftlinkTarget(file.getId()) != null)
+                throw new UserException(POSIXErrno.POSIX_ERROR_EISDIR, "open is restricted to files");
+
             // check quota
             if (create || truncate || write) {
                 QuotaFileInformation quotaFileInformation = new QuotaFileInformation(volume.getId(), file);
                 master.getMrcVoucherManager().checkVoucherAvailability(quotaFileInformation);
             }
-
-            if (file.isDirectory() || sMan.getSoftlinkTarget(file.getId()) != null)
-                throw new UserException(POSIXErrno.POSIX_ERROR_EISDIR, "open is restricted to files");
             
             // check whether the file is marked as 'read-only'; in this
             // case, throw an exception if write access is requested
@@ -157,7 +159,7 @@ public class OpenOperation extends MRCOperation {
 
                 // check quota
                 QuotaFileInformation quotaFileInformation = new QuotaFileInformation(volume.getId(), fileId,
-                        rq.getDetails().userId, groupId, 0);
+                        rq.getDetails().userId, groupId, 0, 1);
                 master.getMrcVoucherManager().checkVoucherAvailability(quotaFileInformation);
 
                 // create the metadata object
@@ -313,9 +315,13 @@ public class OpenOperation extends MRCOperation {
         long expireMs = TimeSync.getGlobalTime() + master.getConfig().getCapabilityTimeout() * 1000;
         String clientID = ((InetSocketAddress) rq.getRPCRequest().getSenderAddress()).getAddress().getHostAddress();
 
-        long voucherSize = 0; // FIXME(baerhold): Export default value to a proper place
+        // check quota, if write access is issued
+        long voucherSize = QuotaConstants.UNLIMITED_VOUCHER;
         if (create || truncate || write) {
             QuotaFileInformation quotaFileInformation = new QuotaFileInformation(volume.getId(), file);
+            if(defaultReplPolicy != null) {
+                quotaFileInformation.setReplicaCount(defaultReplPolicy.getFactor());
+            }
             voucherSize = master.getMrcVoucherManager().getVoucher(quotaFileInformation, clientID, expireMs, update);
         }
 

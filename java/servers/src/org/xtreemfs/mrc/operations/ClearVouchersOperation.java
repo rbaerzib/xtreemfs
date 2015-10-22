@@ -21,13 +21,17 @@ import org.xtreemfs.mrc.database.AtomicDBUpdate;
 import org.xtreemfs.mrc.database.DatabaseException;
 import org.xtreemfs.mrc.database.DatabaseException.ExceptionType;
 import org.xtreemfs.mrc.database.StorageManager;
+import org.xtreemfs.mrc.metadata.FileMetadata;
+import org.xtreemfs.mrc.quota.QuotaFileInformation;
 import org.xtreemfs.mrc.utils.MRCHelper.GlobalFileIdResolver;
 import org.xtreemfs.pbrpc.generatedinterfaces.Common.emptyResponse;
 import org.xtreemfs.pbrpc.generatedinterfaces.GlobalTypes.OSDFinalizeVouchersResponse;
 import org.xtreemfs.pbrpc.generatedinterfaces.GlobalTypes.StripingPolicy;
 import org.xtreemfs.pbrpc.generatedinterfaces.MRC.xtreemfs_clear_vouchersRequest;
 
-/** TODO: Brief description of the purpose of this type and its relation to other types. */
+/**
+ * Operation to handle a clear voucher request to free voucher with the finalize responses of the osds.
+ */
 public class ClearVouchersOperation extends MRCOperation {
 
     public ClearVouchersOperation(MRCRequestDispatcher master) {
@@ -42,7 +46,6 @@ public class ClearVouchersOperation extends MRCOperation {
         if (master.getReplMasterUUID() != null
                 && !master.getReplMasterUUID().equals(master.getConfig().getUUID().toString()))
             throw new DatabaseException(ExceptionType.REDIRECT);
-        // TODO : redirect really necessary? generalize?
 
         final xtreemfs_clear_vouchersRequest cvRequest = (xtreemfs_clear_vouchersRequest) rq.getRequestArgs();
 
@@ -105,8 +108,16 @@ public class ClearVouchersOperation extends MRCOperation {
         StorageManager sMan = master.getVolumeManager().getStorageManager(globalFileIdResolver.getVolumeId());
         AtomicDBUpdate update = sMan.createAtomicDBUpdate(master, rq);
 
-        master.getMrcVoucherManager().clearVouchers(cap.getFileId(), cap.getClientIdentity(), expireTimeSet,
-                newFileSizeMax, update);
+        FileMetadata metadata = sMan.getMetadata(globalFileIdResolver.getLocalFileId());
+
+        // check for deleted file
+        if (metadata != null) {
+            QuotaFileInformation quotaFileInformation = new QuotaFileInformation(globalFileIdResolver.getVolumeId(),
+                    metadata);
+
+            master.getMrcVoucherManager().clearVouchers(quotaFileInformation, cap.getClientIdentity(), expireTimeSet,
+                    newFileSizeMax, update);
+        }
 
         // TODO(baerhold): update file size for storage
 

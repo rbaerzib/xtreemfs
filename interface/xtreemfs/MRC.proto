@@ -465,12 +465,15 @@ message xtreemfs_check_file_existsResponse {
   repeated FILE_STATE file_states = 2 [packed=true]; 
 }
 
+// requests are clear voucher on the listed expire times
+// with the proper finalize responses from the OSDs
 message xtreemfs_clear_vouchersRequest {
   // latest xcap containing file id and client id
   required FileCredentials creds = 1;
-  
+  // list of respones from finalize voucher requests
+  // from the differend OSDs
   repeated OSDFinalizeVouchersResponse osd_finalize_vouchers_response = 2;
-  
+  // list of expire times, which has been finalized
   repeated fixed64 expire_time_ms = 3;
 }
 
@@ -773,8 +776,14 @@ service MRCService {
   };
 
   // renews an existing capability to extend the validity period
-  rpc xtreemfs_renew_capability(xtreemfs_renew_capabilityRequest) returns(XCap) {
+  rpc xtreemfs_renew_capability(XCap) returns(XCap) {
     option(proc_id)=37;
+  };
+  
+  // renew an existing capability to extend the validity period and
+  // if the flag is active, increase the voucher size
+  rpc xtreemfs_renew_capability_and_voucher(xtreemfs_renew_capabilityRequest) returns(XCap){
+    option(proc_id)=53;
   };
 
   rpc xtreemfs_replication_to_master(emptyRequest) returns(emptyResponse) {

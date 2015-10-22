@@ -1160,8 +1160,12 @@ std::list< ::google::protobuf::uint64> XCapManager::GetOldExpireTimes() {
   return old_expire_times_;
 }
 
-boost::mutex& XCapManager::GetOldExpireTimesMutex() {
-  return old_expire_times_mutex_;
+void XCapManager::acquireOldExpireTimesMutex(){
+  old_expire_times_mutex_.lock();
+}
+
+void XCapManager::releaseOldExpireTimesMutex(){
+  old_expire_times_mutex_.unlock();
 }
 
 void XCapManager::RenewXCapAsync(const RPCOptions& options) {
@@ -1218,7 +1222,7 @@ void XCapManager::RenewXCapAsync(const RPCOptions& options,
   try {
     mrc_uuid_iterator_->GetUUID(&mrc_uuid);
     uuid_resolver_->UUIDToAddressWithOptions(mrc_uuid, &mrc_address, options);
-    mrc_service_client_->xtreemfs_renew_capability(
+    mrc_service_client_->xtreemfs_renew_capability_and_voucher(
         mrc_address,
         auth_bogus_,
         user_credentials_bogus_,
@@ -1279,7 +1283,6 @@ void XCapManager::CallFinished(
     }
   } else {
     // Overwrite current XCap only by a newer one (i.e. later expire time).
-        // FIXME(baerhold): compare expire_time_ms in future
     if (new_xcap->expire_time_ms() > xcap_.expire_time_ms() ||
         (new_xcap->expire_time_ms() == xcap_.expire_time_ms() && new_xcap->voucher_size() > xcap_.voucher_size())) {
       SetXCap(*new_xcap);
@@ -1290,15 +1293,8 @@ void XCapManager::CallFinished(
       }
     } else{
       if (Logging::log->loggingActive(LEVEL_DEBUG)) {
-        // FIXME(remove): No else really needed
         Logging::log->getLog(LEVEL_DEBUG) << "Didn't renewed XCap for file_id: "
-                                          << GetFileId() << ". "
-                                          "Expire Time Old/New (ms): "
-                                          << new_xcap->expire_time_ms() << "/"
-                                          << xcap_.expire_time_ms() << ". "
-                                          "Voucher Size Old/New: "
-                                          << new_xcap->voucher_size() << "/"
-                                          << xcap_.voucher_size() << ". " << endl;
+                                          << GetFileId() << endl;
       }
     }
   }
@@ -1386,7 +1382,7 @@ void VoucherManager::finalizeAndClear(){
   clearVouchersRequest.mutable_creds()->CopyFrom(file_credentials);
 
   {
-    boost::mutex::scoped_lock lock(xcap_manager_->GetOldExpireTimesMutex());
+    xcap_manager_->acquireOldExpireTimesMutex();
     std::list< ::google::protobuf::uint64> oldExpireTimesMs = xcap_manager_->GetOldExpireTimes();
 
     // add old expire times to both requests
@@ -1396,10 +1392,10 @@ void VoucherManager::finalizeAndClear(){
       clearVouchersRequest.add_expire_time_ms(*it);
     }
     oldExpireTimesMs.clear();
+    xcap_manager_->releaseOldExpireTimesMutex();
   }
 
   bool consistentResponses = false;
-  // FIXME(baerhold): Don't use "read tries", choose something else...
   for (int curTry = 1; curTry <= volume_options_.max_read_tries; curTry++) {
 
     boost::mutex::scoped_lock cond_lock(cond_mutex_);
@@ -1459,7 +1455,7 @@ void VoucherManager::finalizeVoucher(
     string osd_uuid;
     string osd_address;
     try {
-      osd_uuid = GetOSDUUIDFromXlocSet(xlocs, 0, i);  // FIXME(baerhold) use replica 0 by default
+      osd_uuid = GetOSDUUIDFromXlocSet(xlocs, 0, i);
       uuid_resolver_->UUIDToAddressWithOptions(
           osd_uuid, &osd_address, RPCOptionsFromOptions(volume_options_));
 

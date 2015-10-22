@@ -4720,31 +4720,41 @@ public final class GlobalTypes {
      */
     long getSnapTimestamp();
 
-    // required fixed64 voucher_size = 11 [default = 0];
+    // optional fixed64 voucher_size = 11 [default = 0];
     /**
-     * <code>required fixed64 voucher_size = 11 [default = 0];</code>
+     * <code>optional fixed64 voucher_size = 11 [default = 0];</code>
      *
      * <pre>
-     * the voucher size indicates the maximal filesize for this file in bytes, zero indicates no active quota
+     * the voucher size indicates the maximal filesize for this file in bytes
+     * zero indicates unlimited file size (no active quota)
      * </pre>
      */
     boolean hasVoucherSize();
     /**
-     * <code>required fixed64 voucher_size = 11 [default = 0];</code>
+     * <code>optional fixed64 voucher_size = 11 [default = 0];</code>
      *
      * <pre>
-     * the voucher size indicates the maximal filesize for this file in bytes, zero indicates no active quota
+     * the voucher size indicates the maximal filesize for this file in bytes
+     * zero indicates unlimited file size (no active quota)
      * </pre>
      */
     long getVoucherSize();
 
-    // required fixed64 expire_time_ms = 12 [default = 0];
+    // optional fixed64 expire_time_ms = 12 [default = 0];
     /**
-     * <code>required fixed64 expire_time_ms = 12 [default = 0];</code>
+     * <code>optional fixed64 expire_time_ms = 12 [default = 0];</code>
+     *
+     * <pre>
+     * Timestamp when the XCap expires in milli seconds.
+     * </pre>
      */
     boolean hasExpireTimeMs();
     /**
-     * <code>required fixed64 expire_time_ms = 12 [default = 0];</code>
+     * <code>optional fixed64 expire_time_ms = 12 [default = 0];</code>
+     *
+     * <pre>
+     * Timestamp when the XCap expires in milli seconds.
+     * </pre>
      */
     long getExpireTimeMs();
   }
@@ -4752,7 +4762,7 @@ public final class GlobalTypes {
    * Protobuf type {@code xtreemfs.pbrpc.XCap}
    *
    * <pre>
-   * The XCap is the authorization token that allows a 
+   * The XCap is the authorization token that allows a
    * client to execute operations on an OSD. It is created
    * by the MRC on open and must be renewed by the client
    * *before* it times out.
@@ -5254,41 +5264,51 @@ public final class GlobalTypes {
       return snapTimestamp_;
     }
 
-    // required fixed64 voucher_size = 11 [default = 0];
+    // optional fixed64 voucher_size = 11 [default = 0];
     public static final int VOUCHER_SIZE_FIELD_NUMBER = 11;
     private long voucherSize_;
     /**
-     * <code>required fixed64 voucher_size = 11 [default = 0];</code>
+     * <code>optional fixed64 voucher_size = 11 [default = 0];</code>
      *
      * <pre>
-     * the voucher size indicates the maximal filesize for this file in bytes, zero indicates no active quota
+     * the voucher size indicates the maximal filesize for this file in bytes
+     * zero indicates unlimited file size (no active quota)
      * </pre>
      */
     public boolean hasVoucherSize() {
       return ((bitField0_ & 0x00000400) == 0x00000400);
     }
     /**
-     * <code>required fixed64 voucher_size = 11 [default = 0];</code>
+     * <code>optional fixed64 voucher_size = 11 [default = 0];</code>
      *
      * <pre>
-     * the voucher size indicates the maximal filesize for this file in bytes, zero indicates no active quota
+     * the voucher size indicates the maximal filesize for this file in bytes
+     * zero indicates unlimited file size (no active quota)
      * </pre>
      */
     public long getVoucherSize() {
       return voucherSize_;
     }
 
-    // required fixed64 expire_time_ms = 12 [default = 0];
+    // optional fixed64 expire_time_ms = 12 [default = 0];
     public static final int EXPIRE_TIME_MS_FIELD_NUMBER = 12;
     private long expireTimeMs_;
     /**
-     * <code>required fixed64 expire_time_ms = 12 [default = 0];</code>
+     * <code>optional fixed64 expire_time_ms = 12 [default = 0];</code>
+     *
+     * <pre>
+     * Timestamp when the XCap expires in milli seconds.
+     * </pre>
      */
     public boolean hasExpireTimeMs() {
       return ((bitField0_ & 0x00000800) == 0x00000800);
     }
     /**
-     * <code>required fixed64 expire_time_ms = 12 [default = 0];</code>
+     * <code>optional fixed64 expire_time_ms = 12 [default = 0];</code>
+     *
+     * <pre>
+     * Timestamp when the XCap expires in milli seconds.
+     * </pre>
      */
     public long getExpireTimeMs() {
       return expireTimeMs_;
@@ -5350,14 +5370,6 @@ public final class GlobalTypes {
         return false;
       }
       if (!hasSnapTimestamp()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasVoucherSize()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasExpireTimeMs()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -5543,7 +5555,7 @@ public final class GlobalTypes {
      * Protobuf type {@code xtreemfs.pbrpc.XCap}
      *
      * <pre>
-     * The XCap is the authorization token that allows a 
+     * The XCap is the authorization token that allows a
      * client to execute operations on an OSD. It is created
      * by the MRC on open and must be renewed by the client
      * *before* it times out.
@@ -5785,14 +5797,6 @@ public final class GlobalTypes {
           return false;
         }
         if (!hasSnapTimestamp()) {
-          
-          return false;
-        }
-        if (!hasVoucherSize()) {
-          
-          return false;
-        }
-        if (!hasExpireTimeMs()) {
           
           return false;
         }
@@ -6474,33 +6478,36 @@ public final class GlobalTypes {
         return this;
       }
 
-      // required fixed64 voucher_size = 11 [default = 0];
+      // optional fixed64 voucher_size = 11 [default = 0];
       private long voucherSize_ ;
       /**
-       * <code>required fixed64 voucher_size = 11 [default = 0];</code>
+       * <code>optional fixed64 voucher_size = 11 [default = 0];</code>
        *
        * <pre>
-       * the voucher size indicates the maximal filesize for this file in bytes, zero indicates no active quota
+       * the voucher size indicates the maximal filesize for this file in bytes
+       * zero indicates unlimited file size (no active quota)
        * </pre>
        */
       public boolean hasVoucherSize() {
         return ((bitField0_ & 0x00000400) == 0x00000400);
       }
       /**
-       * <code>required fixed64 voucher_size = 11 [default = 0];</code>
+       * <code>optional fixed64 voucher_size = 11 [default = 0];</code>
        *
        * <pre>
-       * the voucher size indicates the maximal filesize for this file in bytes, zero indicates no active quota
+       * the voucher size indicates the maximal filesize for this file in bytes
+       * zero indicates unlimited file size (no active quota)
        * </pre>
        */
       public long getVoucherSize() {
         return voucherSize_;
       }
       /**
-       * <code>required fixed64 voucher_size = 11 [default = 0];</code>
+       * <code>optional fixed64 voucher_size = 11 [default = 0];</code>
        *
        * <pre>
-       * the voucher size indicates the maximal filesize for this file in bytes, zero indicates no active quota
+       * the voucher size indicates the maximal filesize for this file in bytes
+       * zero indicates unlimited file size (no active quota)
        * </pre>
        */
       public Builder setVoucherSize(long value) {
@@ -6510,10 +6517,11 @@ public final class GlobalTypes {
         return this;
       }
       /**
-       * <code>required fixed64 voucher_size = 11 [default = 0];</code>
+       * <code>optional fixed64 voucher_size = 11 [default = 0];</code>
        *
        * <pre>
-       * the voucher size indicates the maximal filesize for this file in bytes, zero indicates no active quota
+       * the voucher size indicates the maximal filesize for this file in bytes
+       * zero indicates unlimited file size (no active quota)
        * </pre>
        */
       public Builder clearVoucherSize() {
@@ -6523,22 +6531,34 @@ public final class GlobalTypes {
         return this;
       }
 
-      // required fixed64 expire_time_ms = 12 [default = 0];
+      // optional fixed64 expire_time_ms = 12 [default = 0];
       private long expireTimeMs_ ;
       /**
-       * <code>required fixed64 expire_time_ms = 12 [default = 0];</code>
+       * <code>optional fixed64 expire_time_ms = 12 [default = 0];</code>
+       *
+       * <pre>
+       * Timestamp when the XCap expires in milli seconds.
+       * </pre>
        */
       public boolean hasExpireTimeMs() {
         return ((bitField0_ & 0x00000800) == 0x00000800);
       }
       /**
-       * <code>required fixed64 expire_time_ms = 12 [default = 0];</code>
+       * <code>optional fixed64 expire_time_ms = 12 [default = 0];</code>
+       *
+       * <pre>
+       * Timestamp when the XCap expires in milli seconds.
+       * </pre>
        */
       public long getExpireTimeMs() {
         return expireTimeMs_;
       }
       /**
-       * <code>required fixed64 expire_time_ms = 12 [default = 0];</code>
+       * <code>optional fixed64 expire_time_ms = 12 [default = 0];</code>
+       *
+       * <pre>
+       * Timestamp when the XCap expires in milli seconds.
+       * </pre>
        */
       public Builder setExpireTimeMs(long value) {
         bitField0_ |= 0x00000800;
@@ -6547,7 +6567,11 @@ public final class GlobalTypes {
         return this;
       }
       /**
-       * <code>required fixed64 expire_time_ms = 12 [default = 0];</code>
+       * <code>optional fixed64 expire_time_ms = 12 [default = 0];</code>
+       *
+       * <pre>
+       * Timestamp when the XCap expires in milli seconds.
+       * </pre>
        */
       public Builder clearExpireTimeMs() {
         bitField0_ = (bitField0_ & ~0x00000800);
@@ -11954,8 +11978,8 @@ public final class GlobalTypes {
       "ver_signature\030\007 \002(\t\022\026\n\016truncate_epoch\030\010 " +
       "\002(\007\022/\n\013snap_config\030\t \002(\0162\032.xtreemfs.pbrp" +
       "c.SnapConfig\022\026\n\016snap_timestamp\030\n \002(\006\022\027\n\014" +
-      "voucher_size\030\013 \002(\006:\0010\022\031\n\016expire_time_ms\030" +
-      "\014 \002(\006:\0010\"\201\001\n\007XLocSet\022\033\n\023read_only_file_s",
+      "voucher_size\030\013 \001(\006:\0010\022\031\n\016expire_time_ms\030" +
+      "\014 \001(\006:\0010\"\201\001\n\007XLocSet\022\033\n\023read_only_file_s",
       "ize\030\001 \002(\006\022)\n\010replicas\030\002 \003(\0132\027.xtreemfs.p" +
       "brpc.Replica\022\035\n\025replica_update_policy\030\003 " +
       "\002(\t\022\017\n\007version\030\004 \002(\007\"]\n\017FileCredentials\022" +

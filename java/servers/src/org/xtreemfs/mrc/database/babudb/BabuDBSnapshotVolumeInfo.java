@@ -87,8 +87,18 @@ public class BabuDBSnapshotVolumeInfo implements VolumeInfo {
     }
 
     @Override
-    public long getVolumeVoucherSize() throws DatabaseException {
-        return sMan.getVolumeVoucherSize();
+    public long getVoucherSize() throws DatabaseException {
+        return sMan.getVoucherSize();
+    }
+
+    @Override
+    public long getDefaultGroupQuota() throws DatabaseException {
+        return sMan.getDefaultGroupQuota();
+    }
+
+    @Override
+    public long getDefaultUserQuota() throws DatabaseException {
+        return sMan.getDefaultUserQuota();
     }
 
     @Override
@@ -112,7 +122,17 @@ public class BabuDBSnapshotVolumeInfo implements VolumeInfo {
     }
 
     @Override
-    public void setVolumeVoucherSize(long voucherSize, AtomicDBUpdate update) throws DatabaseException {
+    public void setVoucherSize(long voucherSize, AtomicDBUpdate update) throws DatabaseException {
+        sMan.throwException();
+    }
+
+    @Override
+    public void setDefaultGroupQuota(long defaultGroupQuota, AtomicDBUpdate update) throws DatabaseException {
+        sMan.throwException();
+    }
+
+    @Override
+    public void setDefaultUserQuota(long defaultUserQuota, AtomicDBUpdate update) throws DatabaseException {
         sMan.throwException();
     }
 

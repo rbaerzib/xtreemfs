@@ -95,7 +95,7 @@ public class StorageThread extends Stage {
     public static final int            STAGEOP_FINALIZE_VOUCHERS     = 15;
 
     private final MetadataCache        cache;
-    
+
     private final StorageLayout        layout;
     
     private final OSDRequestDispatcher master;
@@ -518,7 +518,8 @@ public class StorageThread extends Stage {
             }
             
             // check quota
-            if (!master.getOsdVoucherManager().checkMaxVoucherSize(fileId,
+            if (rq.getRequest() != null
+                    && !master.getOsdVoucherManager().checkMaxVoucherSize(fileId,
                     rq.getRequest().getCapability().getClientIdentity(), rq.getRequest().getCapability().getExpireMs(),
                     sp.getObjectStartOffset(objNo) + offset + dataCapacity)) {
                 BufferPool.free(data);
@@ -649,7 +650,6 @@ public class StorageThread extends Stage {
                 Logging.logError(Logging.LEVEL_DEBUG, this, ex);
             }
 
-            // FIXME (baerhold) writeComplete - change EACCES to ...?
             cback.writeComplete(null,
                     ErrorUtils.getErrorResponse(ErrorType.ERRNO, POSIXErrno.POSIX_ERROR_EACCES, ex.toString(), ex));
         }
@@ -759,7 +759,8 @@ public class StorageThread extends Stage {
                 newGlobalLastObject = sp.getObjectNoForOffset(newFileSize - 1);
             } else if (fi.getFilesize() < newFileSize) {
                 // check quota
-                if (!master.getOsdVoucherManager().checkMaxVoucherSize(fileId,
+                if (rq.getRequest() != null
+                        && !master.getOsdVoucherManager().checkMaxVoucherSize(fileId,
                         rq.getRequest().getCapability().getClientIdentity(),
                         rq.getRequest().getCapability().getExpireMs(), newFileSize)) {
                     if (Logging.isDebug()) {
@@ -819,7 +820,6 @@ public class StorageThread extends Stage {
                 Logging.logError(Logging.LEVEL_DEBUG, this, ex);
             }
 
-            // FIXME (baerhold) writeComplete - change EACCES to ...?
             cback.truncateComplete(null,
                     ErrorUtils.getErrorResponse(ErrorType.ERRNO, POSIXErrno.POSIX_ERROR_EACCES, ex.toString(), ex));
         } catch (Exception ex) {
