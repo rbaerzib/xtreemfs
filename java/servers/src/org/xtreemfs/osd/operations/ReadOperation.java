@@ -194,7 +194,7 @@ public final class ReadOperation extends OSDOperation {
                         gmaxRPCs[cnt++] = master.getOSDClient().xtreemfs_internal_get_gmax(osd.getAddress(), RPCAuthentication.authNone,RPCAuthentication.userService,args.getFileCredentials(),args.getFileId());
                     }
                 }
-                System.out.println(" ::: > all Requests added");
+                Logging.logMessage(Logging.LEVEL_INFO, Category.net, this, "::: > all Requests added");
                 this.waitForResponses(gmaxRPCs, new ResponsesListener() {
 
                     @Override

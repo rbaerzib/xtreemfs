@@ -180,23 +180,25 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                 connections.put(server, con);
             }
         }
+
+        if (request.getRequestHeader().getRequestHeader() != null
+                && request.getRequestHeader().getRequestHeader().getProcId() == 40) {
+            String logMessage = " ;-; Add GET GMAX to Send Queue";
+            logMessage += "\n ;-; call_id: " + request.getRequestHeader().getCallId();
+            logMessage += "\n ;-; Endpoint: " + con.getEndpointString();
+            Logging.logMessage(Logging.LEVEL_INFO, Category.net, this, logMessage);
+        }
+
         synchronized (con) {
             boolean isEmpty = con.getSendQueue().isEmpty();
             request.queued();
             con.useConnection();
 
-            if (request.getRequestHeader().getRequestHeader() != null
-                    && request.getRequestHeader().getRequestHeader().getProcId() == 40) {
-                String logMessage = " ;-; Add GET GMAX to Send Queue";
-                logMessage += "\n ;-; call_id: " + request.getRequestHeader().getCallId();
-                logMessage += "\n ;-; Endpoint: " + con.getEndpointString();
-                Logging.logMessage(Logging.LEVEL_INFO, Category.net, this, logMessage);
-            }
-
             if (highPriority)
                 con.getSendQueue().add(0, request);
             else
                 con.getSendQueue().add(request);
+
             if (request.getRequestHeader().getRequestHeader() != null
                     && request.getRequestHeader().getRequestHeader().getProcId() == 40) {
                 System.out.println(" ;-; - added");
