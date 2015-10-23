@@ -161,6 +161,7 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                     proc_id, message, data, response);
             internalSendRequest(server, rq, highPriority);
         } catch (Throwable e) { // CancelledKeyException, RuntimeException (caused by missing TimeSyncThread)
+            Logging.logError(Logging.LEVEL_ERROR, this, e);
             // e.printStackTrace();
             response.requestFailed(e.toString());
         }
@@ -171,6 +172,12 @@ public class RPCNIOSocketClient extends LifeCycleThread {
             Logging.logMessage(Logging.LEVEL_DEBUG, Category.net, this, "sending request %s no %d", request.toString(),
                     transactionId.get());
         }
+
+        if (request.getRequestHeader().getRequestHeader() != null
+                && request.getRequestHeader().getRequestHeader().getProcId() == 40) {
+            System.out.println(";-; BEFORE ADD");
+        }
+
         // get connection
         RPCClientConnection con = null;
         synchronized (connections) {
@@ -183,13 +190,15 @@ public class RPCNIOSocketClient extends LifeCycleThread {
 
         if (request.getRequestHeader().getRequestHeader() != null
                 && request.getRequestHeader().getRequestHeader().getProcId() == 40) {
-            String logMessage = " ;-; Add GET GMAX to Send Queue";
-            logMessage += "\n ;-; call_id: " + request.getRequestHeader().getCallId();
-            logMessage += "\n ;-; Endpoint: " + con.getEndpointString();
+            String logMessage = " §§§ Add GET GMAX to Send Queue";
+            logMessage += "\n §§§ call_id: " + request.getRequestHeader().getCallId();
+            logMessage += "\n §§§ Endpoint: " + con.getEndpointString();
+            logMessage += "\n §§§ Sync Owner: " + con.syncOwner;
             Logging.logMessage(Logging.LEVEL_INFO, Category.net, this, logMessage);
         }
 
         synchronized (con) {
+            con.syncOwner = Thread.currentThread().getName() + " @@ internalSendRequest";
             boolean isEmpty = con.getSendQueue().isEmpty();
             request.queued();
             con.useConnection();
@@ -201,7 +210,7 @@ public class RPCNIOSocketClient extends LifeCycleThread {
 
             if (request.getRequestHeader().getRequestHeader() != null
                     && request.getRequestHeader().getRequestHeader().getProcId() == 40) {
-                System.out.println(" ;-; - added");
+                System.out.println(" §§§ - added");
             }
 
             if (!con.isConnected()) {
@@ -210,7 +219,7 @@ public class RPCNIOSocketClient extends LifeCycleThread {
             } else {
                 if (request.getRequestHeader().getRequestHeader() != null
                         && request.getRequestHeader().getRequestHeader().getProcId() == 40) {
-                    System.out.println(" ;-; connection given and empty: " + isEmpty);
+                    System.out.println(" §§§ connection given and empty: " + isEmpty);
                 }
                 if (isEmpty) {
                     final SelectionKey key = con.getChannel().keyFor(selector);
@@ -224,6 +233,7 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                     selector.wakeup();
                 }
             }
+            con.syncOwner = "";
         }
     }
 
@@ -324,6 +334,7 @@ public class RPCNIOSocketClient extends LifeCycleThread {
         synchronized (connections) {
             for (RPCClientConnection con : connections.values()) {
                 synchronized (con) {
+                    con.syncOwner = Thread.currentThread().getName() + " @@ run";
                     for (RPCClientRequest rq : con.getSendQueue()) {
                         rq.getResponse().requestFailed("RPC cancelled due to client shutdown");
                         rq.freeBuffers();
@@ -338,6 +349,7 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
+                    con.syncOwner = "";
                 }
             }
         }
@@ -424,6 +436,7 @@ public class RPCNIOSocketClient extends LifeCycleThread {
             Logging.logMessage(Logging.LEVEL_INFO, Category.net, this,
                     "reconnect to server still blocked locally to avoid flooding (server: %s)", con.getEndpointString());
             synchronized (con) {
+                con.syncOwner = Thread.currentThread().getName() + " @@ establishConnection";
                 for (RPCClientRequest rq : con.getSendQueue()) {
                     rq.getResponse().requestFailed(
                             "sending RPC failed: reconnecting to the server '" + con.getEndpointString()
@@ -431,6 +444,7 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                     rq.freeBuffers();
                 }
                 con.getSendQueue().clear();
+                con.syncOwner = "";
             }
         }
 
@@ -610,12 +624,14 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                         if (buffers == null) {
                             assert (send == null);
                             synchronized (con) {
+                                con.syncOwner = Thread.currentThread().getName() + " @@ writeConnection #1";
                                 if (con.getSendQueue().isEmpty()) {
                                     // no more responses, stop writing...
                                     key.interestOps(key.interestOps() & ~SelectionKey.OP_WRITE);
                                     break;
                                 }
                                 send = con.getSendQueue().remove(0);
+                                con.syncOwner = "";
                             }
                             assert (send != null);
                             con.getRequestRecordMarker().clear();
@@ -645,6 +661,7 @@ public class RPCNIOSocketClient extends LifeCycleThread {
 
                         // remove from queue
                         synchronized (con) {
+                            con.syncOwner = Thread.currentThread().getName() + " @@ writeConnection #2";
                             if (send.getRequestHeader().getRequestHeader() != null
                                     && send.getRequestHeader().getRequestHeader().getProcId() == 40) {
                                 String logMessage = " *-+ Send out GET GMAX Request";
@@ -657,6 +674,7 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                                 Logging.logMessage(Logging.LEVEL_DEBUG, Category.net, this, "sent request %d to %s",
                                         send.getRequestHeader().getCallId(), con.getEndpointString());
                             }
+                            con.syncOwner = "";
                         }
                         send.checkEnoughBytesSent();
                         con.setRequestBuffers(null);
@@ -693,9 +711,11 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                 channel.finishConnect();
             }
             synchronized (con) {
+                con.syncOwner = Thread.currentThread().getName() + " @@ connectionConnection";
                 if (!con.getSendQueue().isEmpty()) {
                     key.interestOps(SelectionKey.OP_WRITE | SelectionKey.OP_READ);
                 }
+                con.syncOwner = "";
             }
             con.connected();
             if (Logging.isDebug()) {
@@ -723,6 +743,7 @@ public class RPCNIOSocketClient extends LifeCycleThread {
 
         List<RPCClientRequest> cancelRq = new LinkedList<RPCClientRequest>();
         synchronized (con) {
+            con.syncOwner = Thread.currentThread().getName() + " @@ closeConnection";
             // remove the connection from the selector and close socket
             try {
                 key.cancel();
@@ -734,6 +755,7 @@ public class RPCNIOSocketClient extends LifeCycleThread {
             con.getRequests().clear();
             con.getSendQueue().clear();
             con.setChannel(null);
+            con.syncOwner = "";
         }
 
         // notify listeners
@@ -772,6 +794,7 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                         // check for request timeout
                         List<RPCClientRequest> cancelRq = new LinkedList<RPCClientRequest>();
                         synchronized (con) {
+                            con.syncOwner = Thread.currentThread().getName() + " @@ checkForTimers";
 
                             Iterator<RPCClientRequest> iter = con.getRequests().values().iterator();
                             while (iter.hasNext()) {
@@ -853,6 +876,7 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                                     break;
                                 }
                             }
+                            con.syncOwner = "";
                         }
                         for (RPCClientRequest rq : cancelRq) {
                             rq.getResponse().requestFailed("sending RPC failed: request timed out");
