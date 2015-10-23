@@ -92,6 +92,8 @@ public class RPCNIOSocketClient extends LifeCycleThread {
 
     private final SocketAddress                               localBindPoint;
 
+    private String                                            connectionsSyncOwner = "";
+
     /**
      * on some platforms (e.g. FreeBSD 7.2 with openjdk6) Selector.select(int timeout) returns immediately. If this
      * problem is detected, the thread waits 25ms after each invocation to avoid excessive CPU consumption. See also
@@ -175,23 +177,27 @@ public class RPCNIOSocketClient extends LifeCycleThread {
 
         if (request.getRequestHeader().getRequestHeader() != null
                 && request.getRequestHeader().getRequestHeader().getProcId() == 40) {
-            System.out.println(";-; BEFORE ADD");
+            String logMessage = " §__§ BEFORE ADD";
+            logMessage += "\n §__§ connections Sync owner: " + connectionsSyncOwner;
+            Logging.logMessage(Logging.LEVEL_INFO, Category.net, this, logMessage);
         }
 
         // get connection
         RPCClientConnection con = null;
         synchronized (connections) {
+            connectionsSyncOwner = Thread.currentThread().getName() + " @-@ internalSendRequest";
             con = connections.get(server);
             if (con == null) {
                 con = new RPCClientConnection(server);
                 connections.put(server, con);
             }
+            connectionsSyncOwner = "";
         }
 
         if (request.getRequestHeader().getRequestHeader() != null
                 && request.getRequestHeader().getRequestHeader().getProcId() == 40) {
             String logMessage = " §§§ Add GET GMAX to Send Queue";
-            logMessage += "\n §§§ call_id: " + request.getRequestHeader().getCallId();
+            logMessage += "\n §§§ call_id: " + request.getRequestHeader().getCallId() + "#";
             logMessage += "\n §§§ Endpoint: " + con.getEndpointString();
             logMessage += "\n §§§ Sync Owner: " + con.syncOwner;
             Logging.logMessage(Logging.LEVEL_INFO, Category.net, this, logMessage);
@@ -332,6 +338,7 @@ public class RPCNIOSocketClient extends LifeCycleThread {
         }
 
         synchronized (connections) {
+            connectionsSyncOwner = Thread.currentThread().getName() + " @-@ run";
             for (RPCClientConnection con : connections.values()) {
                 synchronized (con) {
                     con.syncOwner = Thread.currentThread().getName() + " @@ run";
@@ -352,6 +359,7 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                     con.syncOwner = "";
                 }
             }
+            connectionsSyncOwner = "";
         }
 
         notifyStopped();
@@ -776,6 +784,7 @@ public class RPCNIOSocketClient extends LifeCycleThread {
         if (now >= lastCheck.get() + TIMEOUT_GRANULARITY) {
             // check for timed out requests
             synchronized (connections) {
+                connectionsSyncOwner = Thread.currentThread().getName() + " @-@ checkForTimers";
                 Iterator<RPCClientConnection> conIter = connections.values().iterator();
                 while (conIter.hasNext()) {
                     final RPCClientConnection con = conIter.next();
@@ -887,6 +896,7 @@ public class RPCNIOSocketClient extends LifeCycleThread {
                 }
                 
                 lastCheck.set(now);
+                connectionsSyncOwner = "";
             }
         }
     }
@@ -906,7 +916,9 @@ public class RPCNIOSocketClient extends LifeCycleThread {
     public long[] getTransferStats(InetSocketAddress server) {
         RPCClientConnection con = null;
         synchronized (connections) {
+            connectionsSyncOwner = Thread.currentThread().getName() + " @-@ getTransferStats";
             con = connections.get(server);
+            connectionsSyncOwner = "";
         }
         if (con == null)
             return null;
