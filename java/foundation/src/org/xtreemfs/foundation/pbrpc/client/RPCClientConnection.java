@@ -63,7 +63,7 @@ public class RPCClientConnection {
 
     volatile long bytesRX, bytesTX;
     
-    public String                                syncOwner         = "";
+    // public String syncOwner = "";
 
     public RPCClientConnection(InetSocketAddress endpoint) {
         requests = new HashMap<Integer, RPCClientRequest>();
