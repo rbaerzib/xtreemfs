@@ -177,9 +177,7 @@ public class RPCNIOSocketClient extends LifeCycleThread {
 
         if (request.getRequestHeader().getRequestHeader() != null
                 && request.getRequestHeader().getRequestHeader().getProcId() == 40) {
-            String logMessage = " §__§ BEFORE ADD";
-            logMessage += "\n §__§ connections Sync owner: " + connectionsSyncOwner;
-            Logging.logMessage(Logging.LEVEL_INFO, Category.net, this, logMessage);
+            System.out.println("§__§ connections Sync owner: " + connectionsSyncOwner);
         }
 
         // get connection
@@ -216,7 +214,7 @@ public class RPCNIOSocketClient extends LifeCycleThread {
 
             if (request.getRequestHeader().getRequestHeader() != null
                     && request.getRequestHeader().getRequestHeader().getProcId() == 40) {
-                System.out.println(" §§§ - added");
+                // System.out.println(" §§§ - added");
             }
 
             if (!con.isConnected()) {
@@ -225,7 +223,7 @@ public class RPCNIOSocketClient extends LifeCycleThread {
             } else {
                 if (request.getRequestHeader().getRequestHeader() != null
                         && request.getRequestHeader().getRequestHeader().getProcId() == 40) {
-                    System.out.println(" §§§ connection given and empty: " + isEmpty);
+                    // System.out.println(" §§§ connection given and empty: " + isEmpty);
                 }
                 if (isEmpty) {
                     final SelectionKey key = con.getChannel().keyFor(selector);
